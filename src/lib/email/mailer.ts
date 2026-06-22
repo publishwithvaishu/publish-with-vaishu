@@ -1,0 +1,72 @@
+import "server-only";
+import { Resend } from "resend";
+
+const FROM =
+  process.env.RESEND_FROM ?? "Publish With Vaishu <onboarding@resend.dev>";
+
+/**
+ * Send a transactional email. If RESEND_API_KEY is not configured (e.g. local
+ * dev), the email is logged to the server console instead of being sent — so
+ * verification / reset flows remain testable without a Resend account.
+ */
+export async function sendEmail(params: {
+  to: string;
+  subject: string;
+  html: string;
+  text: string;
+}): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+
+  if (!apiKey) {
+    console.log(
+      `\n[email:dev] (RESEND_API_KEY not set — not actually sent)\n` +
+        `  to:      ${params.to}\n` +
+        `  subject: ${params.subject}\n` +
+        `  body:\n${params.text}\n`,
+    );
+    return;
+  }
+
+  const resend = new Resend(apiKey);
+  const { error } = await resend.emails.send({
+    from: FROM,
+    to: params.to,
+    subject: params.subject,
+    html: params.html,
+    text: params.text,
+  });
+  if (error) throw new Error(`Email send failed: ${error.message}`);
+}
+
+const wrap = (heading: string, body: string, cta: { label: string; url: string }) => `
+  <div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:480px;margin:0 auto;color:#1d1d1f">
+    <h1 style="font-size:20px;margin:0 0 16px">${heading}</h1>
+    <p style="font-size:15px;line-height:1.6;color:#6e6e73;margin:0 0 24px">${body}</p>
+    <a href="${cta.url}" style="display:inline-block;background:#000;color:#fff;text-decoration:none;font-size:14px;font-weight:500;padding:12px 24px;border-radius:9999px">${cta.label}</a>
+    <p style="font-size:12px;color:#6e6e73;margin:24px 0 0">If the button doesn't work, paste this link into your browser:<br>${cta.url}</p>
+    <p style="font-size:12px;color:#6e6e73;margin:24px 0 0">— Publish With Vaishu</p>
+  </div>`;
+
+export function verifyEmailContent(url: string) {
+  return {
+    subject: "Verify your email — Publish With Vaishu",
+    html: wrap(
+      "Confirm your email",
+      "Welcome to Publish With Vaishu. Please confirm your email address to finish setting up your account.",
+      { label: "Verify email", url },
+    ),
+    text: `Confirm your email for Publish With Vaishu by opening this link:\n${url}`,
+  };
+}
+
+export function resetPasswordContent(url: string) {
+  return {
+    subject: "Reset your password — Publish With Vaishu",
+    html: wrap(
+      "Reset your password",
+      "We received a request to reset your password. This link expires in 60 minutes. If you didn't request it, you can ignore this email.",
+      { label: "Reset password", url },
+    ),
+    text: `Reset your Publish With Vaishu password (link expires in 60 minutes):\n${url}`,
+  };
+}

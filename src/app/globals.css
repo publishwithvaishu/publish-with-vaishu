@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/*  Publish With Vaishu — design tokens                                */
+/*  Apple / Notion / Stripe Press inspired. Light theme only.          */
+/* ------------------------------------------------------------------ */
+
+@theme {
+  /* Colours */
+  --color-bg: #ffffff;
+  --color-bg-secondary: #fcfbf7;
+  --color-ink: #1d1d1f;
+  --color-muted: #6e6e73;
+  --color-hairline: #e8e8e6;
+  --color-primary: #000000;
+
+  /* Typography */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: var(--font-source-serif), ui-serif, Georgia, Cambria,
+    "Times New Roman", serif;
+}
+
+/* Light theme only — never invert for dark mode (spec §4). */
+html {
+  color-scheme: light;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Visible, on-brand focus ring for accessibility. */
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Minimum 44px tap target helper (spec §4). */
+@utility tap-target {
+  min-height: 44px;
+  min-width: 44px;
+}
