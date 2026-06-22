@@ -1,6 +1,12 @@
 import "server-only";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
-import { SHIPPING_FEE, FREE_SHIPPING_THRESHOLD, TAX_RATE } from "@/lib/orders/pricing";
+import {
+  SHIPPING_FEE,
+  FREE_SHIPPING_THRESHOLD,
+  TAX_RATE,
+  computeTotals,
+  type PriceBreakdown,
+} from "@/lib/orders/pricing";
 import type {
   Order,
   OrderItem,
@@ -14,6 +20,55 @@ export interface PlaceOrderInput {
   address: ShippingAddressSnapshot;
   items: { book_id: string; quantity: number }[];
   paymentMethod: string;
+}
+
+/**
+ * Price a cart server-side from live DB prices and validate stock. Used to
+ * compute the authoritative amount for a Razorpay order BEFORE creating the
+ * actual order (which only happens after payment verification).
+ */
+export async function priceCart(
+  items: { book_id: string; quantity: number }[],
+): Promise<PriceBreakdown> {
+  if (items.length === 0) throw new Error("Your cart is empty.");
+
+  const supabase = getSupabaseAdminClient();
+  const ids = items.map((i) => i.book_id);
+  const { data, error } = await supabase
+    .from("books")
+    .select("id, price, stock, title")
+    .in("id", ids);
+  if (error) throw new Error(error.message);
+
+  const byId = new Map((data ?? []).map((b) => [b.id as string, b]));
+  let subtotal = 0;
+  for (const item of items) {
+    const book = byId.get(item.book_id);
+    if (!book) throw new Error("A book in your cart no longer exists.");
+    if (item.quantity < 1) throw new Error("Invalid quantity.");
+    if ((book.stock as number) < item.quantity) {
+      throw new Error(`Insufficient stock for "${book.title}"`);
+    }
+    subtotal += (book.price as number) * item.quantity;
+  }
+  return computeTotals(subtotal);
+}
+
+/** Mark an order paid and store its Razorpay identifiers. */
+export async function markOrderPaid(
+  orderId: string,
+  refs: { razorpayOrderId: string; razorpayPaymentId: string },
+): Promise<void> {
+  const supabase = getSupabaseAdminClient();
+  const { error } = await supabase
+    .from("orders")
+    .update({
+      payment_status: "paid",
+      razorpay_order_id: refs.razorpayOrderId,
+      razorpay_payment_id: refs.razorpayPaymentId,
+    })
+    .eq("id", orderId);
+  if (error) throw new Error(error.message);
 }
 
 /** Create an order atomically via the place_order RPC. */

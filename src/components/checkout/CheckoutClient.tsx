@@ -7,13 +7,22 @@ import { useCart } from "@/lib/cart/CartContext";
 import { computeTotals, amountToFreeShipping } from "@/lib/orders/pricing";
 import { createOrderAction } from "@/lib/actions/order-actions";
 import { OrderTotals } from "@/components/orders/OrderTotals";
+import { RazorpayButton } from "@/components/checkout/RazorpayButton";
 import { BookCover } from "@/components/ui/BookCover";
 import { FormAlert } from "@/components/forms/FormAlert";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/cn";
 import type { Address } from "@/lib/auth/addresses";
 
-export function CheckoutClient({ addresses }: { addresses: Address[] }) {
+export function CheckoutClient({
+  addresses,
+  razorpayEnabled = false,
+  prefill,
+}: {
+  addresses: Address[];
+  razorpayEnabled?: boolean;
+  prefill?: { name?: string; email?: string };
+}) {
   const { items, subtotal, count, isHydrated, clear } = useCart();
   const router = useRouter();
 
@@ -181,11 +190,28 @@ export function CheckoutClient({ addresses }: { addresses: Address[] }) {
 
         {error && <FormAlert error={error} />}
 
+        {/* Online payment (Razorpay) — primary when configured. */}
+        {razorpayEnabled && (
+          <RazorpayButton
+            addressId={selected}
+            items={items.map((i) => ({ bookId: i.id, quantity: i.quantity }))}
+            prefill={prefill}
+            disabled={!selected}
+            onPaid={clear}
+          />
+        )}
+
+        {/* Pay on delivery (unchanged 3B flow). */}
         <button
           type="button"
           onClick={placeOrder}
           disabled={pending || !selected}
-          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-sm font-medium text-white transition-colors hover:bg-ink/90 disabled:opacity-60"
+          className={cn(
+            "inline-flex h-12 w-full items-center justify-center gap-2 rounded-full px-6 text-sm font-medium transition-colors disabled:opacity-60",
+            razorpayEnabled
+              ? "border border-hairline text-ink hover:bg-bg-secondary"
+              : "bg-primary text-white hover:bg-ink/90",
+          )}
         >
           {pending && (
             <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -193,11 +219,17 @@ export function CheckoutClient({ addresses }: { addresses: Address[] }) {
               <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
             </svg>
           )}
-          {pending ? "Placing order…" : "Place order"}
+          {pending
+            ? "Placing order…"
+            : razorpayEnabled
+              ? "Pay on delivery"
+              : "Place order"}
         </button>
 
         <p className="text-center text-xs text-muted">
-          Pay on delivery. Secure online payment (Razorpay) arrives soon.
+          {razorpayEnabled
+            ? "Pay securely online via Razorpay, or pay on delivery."
+            : "Pay on delivery. Secure online payment (Razorpay) arrives soon."}
         </p>
         <Link
           href="/cart"

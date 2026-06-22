@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { CheckoutClient } from "@/components/checkout/CheckoutClient";
 import { requireUser } from "@/lib/auth/session";
 import { listAddresses } from "@/lib/auth/addresses";
+import { razorpayConfigured } from "@/lib/payments/razorpay";
 
 export const metadata: Metadata = { title: "Checkout" };
 export const dynamic = "force-dynamic";
@@ -22,7 +23,14 @@ export default async function CheckoutPage() {
           <h1 className="mb-8 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
             Checkout
           </h1>
-          <CheckoutClient addresses={addresses} />
+          <CheckoutClient
+            addresses={addresses}
+            razorpayEnabled={razorpayConfigured()}
+            prefill={{
+              name: user.name ?? undefined,
+              email: user.email ?? undefined,
+            }}
+          />
         </Container>
       </main>
       <Footer />
