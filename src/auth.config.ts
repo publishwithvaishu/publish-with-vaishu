@@ -13,21 +13,35 @@ export const authConfig = {
   providers: [],
   callbacks: {
     jwt({ token, user }) {
-      if (user) token.id = user.id;
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+      }
       return token;
     },
     session({ session, token }) {
-      if (token.id && session.user) session.user.id = token.id as string;
+      if (session.user) {
+        if (token.id) session.user.id = token.id as string;
+        session.user.role = token.role as "admin" | "customer" | undefined;
+      }
       return session;
     },
     authorized({ auth, request }) {
       const isLoggedIn = !!auth?.user;
+      const role = auth?.user?.role;
       const { pathname } = request.nextUrl;
+
+      // Admin area: require the admin role; redirect others to admin login.
+      if (pathname.startsWith("/admin")) {
+        if (pathname === "/admin/login") return true;
+        if (role === "admin") return true;
+        return Response.redirect(new URL("/admin/login", request.nextUrl));
+      }
+
+      // Customer-protected areas (unchanged): require any signed-in user.
       const isProtected = PROTECTED_PREFIXES.some(
         (p) => pathname === p || pathname.startsWith(`${p}/`),
       );
-      // Returning false on a protected route redirects to the sign-in page
-      // (with a callbackUrl) automatically.
       if (isProtected) return isLoggedIn;
       return true;
     },

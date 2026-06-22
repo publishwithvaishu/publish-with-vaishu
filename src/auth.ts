@@ -16,17 +16,35 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       authorize: async (credentials) => {
         const parsed = loginSchema.safeParse(credentials);
         if (!parsed.success) return null;
+        const { email, password } = parsed.data;
 
-        const user = await getUserByEmail(parsed.data.email);
+        // Admin: single owner account via env (ADMIN_EMAIL + ADMIN_PASSWORD_HASH).
+        const adminEmail = process.env.ADMIN_EMAIL?.toLowerCase();
+        const adminHash = process.env.ADMIN_PASSWORD_HASH;
+        if (adminEmail && adminHash && email === adminEmail) {
+          const ok = await bcrypt.compare(password, adminHash);
+          if (!ok) return null;
+          return {
+            id: "admin",
+            name: "Administrator",
+            email: adminEmail,
+            role: "admin",
+          };
+        }
+
+        // Customer (unchanged).
+        const user = await getUserByEmail(email);
         if (!user?.password_hash) return null;
 
-        const valid = await bcrypt.compare(
-          parsed.data.password,
-          user.password_hash,
-        );
+        const valid = await bcrypt.compare(password, user.password_hash);
         if (!valid) return null;
 
-        return { id: user.id, name: user.name, email: user.email };
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: "customer",
+        };
       },
     }),
   ],

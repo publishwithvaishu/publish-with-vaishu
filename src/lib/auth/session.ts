@@ -24,3 +24,16 @@ export async function requireDbUser(): Promise<DbUser> {
   if (!user) redirect("/login");
   return user;
 }
+
+/** Require the admin role — redirects to the admin login otherwise. */
+export async function requireAdmin() {
+  const session = await auth();
+  if (session?.user?.role !== "admin") redirect("/admin/login");
+  return session.user;
+}
+
+/** True if the current session is the admin. */
+export async function isAdmin(): Promise<boolean> {
+  const session = await auth();
+  return session?.user?.role === "admin";
+}
