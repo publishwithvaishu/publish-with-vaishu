@@ -39,6 +39,7 @@ export async function getFeaturedBooks(limit = 8): Promise<BookWithRelations[]> 
     .from("books")
     .select(BOOK_CARD_SELECT)
     .eq("is_featured", true)
+    .eq("published", true)
     .order("created_at", { ascending: false })
     .limit(limit);
 
@@ -55,6 +56,7 @@ export async function getPrescribedTitles(
     .from("books")
     .select(BOOK_CARD_SELECT)
     .ilike("university", "%Madras%")
+    .eq("published", true)
     .order("created_at", { ascending: false })
     .limit(limit);
 
@@ -72,7 +74,10 @@ export async function getTrustStats(): Promise<TrustStats> {
   const supabase = getSupabaseServerClient();
 
   const [books, authors, categories] = await Promise.all([
-    supabase.from("books").select("*", { count: "exact", head: true }),
+    supabase
+      .from("books")
+      .select("*", { count: "exact", head: true })
+      .eq("published", true),
     supabase.from("authors").select("*", { count: "exact", head: true }),
     supabase.from("categories").select("*", { count: "exact", head: true }),
   ]);
@@ -128,7 +133,10 @@ export async function getBooks(params: CatalogParams): Promise<CatalogResult> {
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
-  let query = supabase.from("books").select(BOOK_CARD_SELECT, { count: "exact" });
+  let query = supabase
+    .from("books")
+    .select(BOOK_CARD_SELECT, { count: "exact" })
+    .eq("published", true);
 
   // Category filter (by slug → id).
   if (params.category) {
@@ -193,6 +201,7 @@ export async function getBookById(id: string): Promise<BookDetail | null> {
     .from("books")
     .select(BOOK_DETAIL_SELECT)
     .eq("id", id)
+    .eq("published", true)
     .maybeSingle();
 
   if (error) throw new Error(`Failed to load book: ${error.message}`);
@@ -211,6 +220,7 @@ export async function getRelatedBooks(
     .from("books")
     .select(BOOK_CARD_SELECT)
     .eq("category_id", categoryId)
+    .eq("published", true)
     .neq("id", excludeId)
     .order("created_at", { ascending: false })
     .limit(limit);

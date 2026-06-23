@@ -9,10 +9,12 @@ export function Pagination({
   page,
   totalPages,
   baseQuery,
+  basePath = "/books",
 }: {
   page: number;
   totalPages: number;
   baseQuery: Record<string, string>;
+  basePath?: string;
 }) {
   if (totalPages <= 1) return null;
 
@@ -20,7 +22,7 @@ export function Pagination({
     const params = new URLSearchParams(baseQuery);
     if (p > 1) params.set("page", String(p));
     const qs = params.toString();
-    return qs ? `/books?${qs}` : "/books";
+    return qs ? `${basePath}?${qs}` : basePath;
   };
 
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
