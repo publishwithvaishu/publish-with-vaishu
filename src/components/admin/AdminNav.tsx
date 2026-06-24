@@ -4,10 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
 
-// Sections are added as their modules are built (orders, users, etc.).
+// Sections are added as their modules are built (users, categories, etc.).
 const links = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/books", label: "Books" },
+  { href: "/admin/orders", label: "Orders" },
 ];
 
 export function AdminNav() {
