@@ -18,16 +18,19 @@ async function ensureBucket() {
 }
 
 /**
- * Upload a book cover to the public `covers` Supabase Storage bucket and
- * return its public URL. Returns null when no file is provided.
+ * Upload an image to the public `covers` Supabase Storage bucket and return
+ * its public URL. Returns null when no file is provided.
  */
-export async function uploadCover(file: File | null): Promise<string | null> {
+async function uploadImage(
+  file: File | null,
+  label: string,
+): Promise<string | null> {
   if (!file || file.size === 0) return null;
   if (!file.type.startsWith("image/")) {
-    throw new Error("Cover must be an image file.");
+    throw new Error(`${label} must be an image file.`);
   }
   if (file.size > 5 * 1024 * 1024) {
-    throw new Error("Cover image must be under 5 MB.");
+    throw new Error(`${label} must be under 5 MB.`);
   }
 
   await ensureBucket();
@@ -45,4 +48,14 @@ export async function uploadCover(file: File | null): Promise<string | null> {
   if (error) throw new Error(error.message);
 
   return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+}
+
+/** Upload a book cover. Returns its public URL (null if no file). */
+export function uploadCover(file: File | null): Promise<string | null> {
+  return uploadImage(file, "Cover");
+}
+
+/** Upload an author photo. Returns its public URL (null if no file). */
+export function uploadAuthorPhoto(file: File | null): Promise<string | null> {
+  return uploadImage(file, "Photo");
 }
