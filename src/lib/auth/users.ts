@@ -8,11 +8,12 @@ export interface DbUser {
   password_hash: string | null;
   phone: string | null;
   email_verified: string | null;
+  blocked: boolean;
   created_at: string;
 }
 
 const USER_COLUMNS =
-  "id, name, email, password_hash, phone, email_verified, created_at";
+  "id, name, email, password_hash, phone, email_verified, blocked, created_at";
 
 export async function getUserByEmail(email: string): Promise<DbUser | null> {
   const supabase = getSupabaseAdminClient();

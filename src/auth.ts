@@ -32,9 +32,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           };
         }
 
-        // Customer (unchanged).
+        // Customer (unchanged, except blocked accounts cannot sign in).
         const user = await getUserByEmail(email);
         if (!user?.password_hash) return null;
+        if (user.blocked) return null;
 
         const valid = await bcrypt.compare(password, user.password_hash);
         if (!valid) return null;
