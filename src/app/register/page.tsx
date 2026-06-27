@@ -8,7 +8,8 @@ import { getCurrentUser } from "@/lib/auth/session";
 export const metadata: Metadata = { title: "Create account" };
 
 export default async function RegisterPage() {
-  if (await getCurrentUser()) redirect("/account");
+  const current = await getCurrentUser();
+  if (current) redirect(current.role === "admin" ? "/admin" : "/account");
 
   return (
     <AuthShell

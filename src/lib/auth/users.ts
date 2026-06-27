@@ -15,6 +15,14 @@ export interface DbUser {
 const USER_COLUMNS =
   "id, name, email, password_hash, phone, email_verified, blocked, created_at";
 
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Whether a string is a valid UUID (the shape of users.id). */
+export function isUuid(value: string | null | undefined): value is string {
+  return !!value && UUID_RE.test(value);
+}
+
 export async function getUserByEmail(email: string): Promise<DbUser | null> {
   const supabase = getSupabaseAdminClient();
   const { data, error } = await supabase
@@ -27,6 +35,9 @@ export async function getUserByEmail(email: string): Promise<DbUser | null> {
 }
 
 export async function getUserById(id: string): Promise<DbUser | null> {
+  // Only ever query by a valid UUID. Non-UUID ids (e.g. the env-based admin
+  // identity) have no users row — return null instead of hitting Postgres.
+  if (!isUuid(id)) return null;
   const supabase = getSupabaseAdminClient();
   const { data, error } = await supabase
     .from("users")

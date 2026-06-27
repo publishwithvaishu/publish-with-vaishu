@@ -5,6 +5,11 @@ import { authConfig } from "@/auth.config";
 import { getUserByEmail } from "@/lib/auth/users";
 import { loginSchema } from "@/lib/auth/validation";
 
+// The admin is a single-owner, env-based account with no `users` row. It still
+// needs a valid UUID-shaped session id so anything that validates ids (and
+// Postgres) never chokes on it. This sentinel id never collides with real users.
+const ADMIN_USER_ID = "ad000000-0000-4000-8000-000000000000";
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [
@@ -25,7 +30,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           const ok = await bcrypt.compare(password, adminHash);
           if (!ok) return null;
           return {
-            id: "admin",
+            id: ADMIN_USER_ID,
             name: "Administrator",
             email: adminEmail,
             role: "admin",

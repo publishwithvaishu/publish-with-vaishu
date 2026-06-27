@@ -1,7 +1,7 @@
 import "server-only";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { getUserById, type DbUser } from "@/lib/auth/users";
+import { getUserById, isUuid, type DbUser } from "@/lib/auth/users";
 
 /** The session user, or null if signed out. */
 export async function getCurrentUser() {
@@ -16,11 +16,23 @@ export async function requireUser() {
   return session.user;
 }
 
-/** Require a session AND load the full DB user record. */
+/**
+ * Require a session AND load the full DB user record (customer pages only).
+ * The admin is an env-based account with no users row, so it is sent to /admin.
+ * An invalid or unknown session id is redirected to /login (never throws).
+ */
 export async function requireDbUser(): Promise<DbUser> {
   const session = await auth();
-  if (!session?.user?.id) redirect("/login");
-  const user = await getUserById(session.user.id);
+  const sessionUser = session?.user;
+  if (!sessionUser?.id) redirect("/login");
+
+  // Admins have no customer profile — keep them in the admin area.
+  if (sessionUser.role === "admin") redirect("/admin");
+
+  // Customer sessions must carry a valid UUID; anything else is malformed.
+  if (!isUuid(sessionUser.id)) redirect("/login");
+
+  const user = await getUserById(sessionUser.id);
   if (!user) redirect("/login");
   return user;
 }

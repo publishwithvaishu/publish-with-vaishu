@@ -12,7 +12,8 @@ const first = (v: string | string[] | undefined) =>
   Array.isArray(v) ? v[0] : v;
 
 export default async function LoginPage({ searchParams }: { searchParams: SP }) {
-  if (await getCurrentUser()) redirect("/account");
+  const current = await getCurrentUser();
+  if (current) redirect(current.role === "admin" ? "/admin" : "/account");
 
   const sp = await searchParams;
   const rawCallback = first(sp.callbackUrl);
