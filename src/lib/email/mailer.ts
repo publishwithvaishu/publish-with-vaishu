@@ -70,3 +70,19 @@ export function resetPasswordContent(url: string) {
     text: `Reset your Publish With Vaishu password (link expires in 60 minutes):\n${url}`,
   };
 }
+
+export function orderConfirmationContent(params: {
+  orderNumber: string;
+  amount: string; // already-formatted, e.g. "₹369"
+  orderUrl: string;
+}) {
+  return {
+    subject: `Order ${params.orderNumber} confirmed — Publish With Vaishu`,
+    html: wrap(
+      "Thank you for your order!",
+      `Your payment was successful and order <strong>${params.orderNumber}</strong> is confirmed. Amount paid: <strong>${params.amount}</strong>. We'll email you again when it ships.`,
+      { label: "View your order", url: params.orderUrl },
+    ),
+    text: `Thank you! Payment received and order ${params.orderNumber} confirmed (paid ${params.amount}).\nView it here: ${params.orderUrl}`,
+  };
+}

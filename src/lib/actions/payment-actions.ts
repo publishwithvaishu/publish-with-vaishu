@@ -3,7 +3,12 @@
 import { z } from "zod";
 import { requireUser } from "@/lib/auth/session";
 import { getAddress } from "@/lib/auth/addresses";
-import { createOrder, markOrderPaid, priceCart } from "@/lib/orders/orders";
+import {
+  createOrder,
+  markOrderPaid,
+  priceCart,
+  getOrderForUser,
+} from "@/lib/orders/orders";
 import {
   createRazorpayOrder,
   verifyRazorpaySignature,
@@ -15,6 +20,10 @@ import {
   markPaymentPaid,
   markPaymentFailed,
 } from "@/lib/payments/payments";
+import { sendEmail, orderConfirmationContent } from "@/lib/email/mailer";
+import { formatPrice } from "@/lib/format";
+
+const siteUrl = () => process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -153,6 +162,27 @@ export async function verifyPaymentAction(input: {
       razorpayPaymentId: d.razorpayPaymentId,
       signature: d.razorpaySignature,
     });
+
+    // Confirmation email (best-effort — uses the existing mailer; if Resend
+    // isn't configured it's logged to the server console). Never block the
+    // confirmed, paid order on an email failure.
+    try {
+      const detail = await getOrderForUser(user.id, orderId);
+      const to = user.email ?? snapshot.email;
+      if (detail && to) {
+        await sendEmail({
+          to,
+          ...orderConfirmationContent({
+            orderNumber: detail.order.order_number,
+            amount: formatPrice(detail.order.grand_total),
+            orderUrl: `${siteUrl()}/orders/${orderId}`,
+          }),
+        });
+      }
+    } catch (e) {
+      console.error("Order confirmation email failed:", e);
+    }
+
     return { ok: true, orderId };
   } catch (e) {
     return {
