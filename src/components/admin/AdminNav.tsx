@@ -13,6 +13,7 @@ const links = [
   { href: "/admin/users", label: "Customers" },
   { href: "/admin/categories", label: "Categories" },
   { href: "/admin/authors", label: "Authors" },
+  { href: "/admin/reports", label: "Reports" },
 ];
 
 export function AdminNav() {
