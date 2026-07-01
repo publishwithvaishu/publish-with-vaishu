@@ -5,10 +5,13 @@ import { CartCountBadge } from "@/components/cart/CartCountBadge";
 /** Section 1 — Header: logo wordmark + cart + account icon, hairline bottom border. */
 export function Header() {
   return (
-    <header className="sticky top-0 z-40 border-b border-hairline bg-bg/80 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-hairline bg-bg/70 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur-xl supports-[backdrop-filter]:bg-bg/60">
       <Container>
         <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-baseline gap-1.5">
+          <Link href="/" className="flex items-center gap-2">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-sm font-bold text-white">
+              V
+            </span>
             <span className="font-serif text-lg font-semibold tracking-tight text-ink">
               Publish With Vaishu
             </span>
@@ -18,7 +21,7 @@ export function Header() {
             <Link
               href="/cart"
               aria-label="Your cart"
-              className="relative flex items-center justify-center rounded-full text-ink tap-target hover:bg-bg-secondary"
+              className="relative flex items-center justify-center rounded-full text-muted tap-target hover:bg-indigo-50 hover:text-indigo-600"
             >
               <CartIcon />
               <CartCountBadge />
@@ -26,7 +29,7 @@ export function Header() {
             <Link
               href="/account"
               aria-label="Your account"
-              className="flex items-center justify-center rounded-full text-ink tap-target hover:bg-bg-secondary"
+              className="flex items-center justify-center rounded-full text-muted tap-target hover:bg-indigo-50 hover:text-indigo-600"
             >
               <AccountIcon />
             </Link>

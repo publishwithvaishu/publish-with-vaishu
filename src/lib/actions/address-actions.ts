@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireUser } from "@/lib/auth/session";
+import { requireDbUser } from "@/lib/auth/session";
 import { addressSchema, fieldErrors } from "@/lib/auth/validation";
 import {
   createAddress,
@@ -34,7 +34,7 @@ export async function addAddressAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const user = await requireUser();
+  const user = await requireDbUser();
   const parsed = parseAddress(formData);
   if (!parsed.success) {
     return { error: "Please fix the errors below.", fieldErrors: fieldErrors(parsed.error) };
@@ -48,7 +48,7 @@ export async function updateAddressAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const user = await requireUser();
+  const user = await requireDbUser();
   const id = str(formData, "id");
   if (!id) return { error: "Missing address." };
 
@@ -62,7 +62,7 @@ export async function updateAddressAction(
 }
 
 export async function deleteAddressAction(formData: FormData): Promise<void> {
-  const user = await requireUser();
+  const user = await requireDbUser();
   const id = str(formData, "id");
   if (id) {
     await deleteAddress(user.id, id);
@@ -71,7 +71,7 @@ export async function deleteAddressAction(formData: FormData): Promise<void> {
 }
 
 export async function setDefaultAddressAction(formData: FormData): Promise<void> {
-  const user = await requireUser();
+  const user = await requireDbUser();
   const id = str(formData, "id");
   if (id) {
     await setDefaultAddress(user.id, id);

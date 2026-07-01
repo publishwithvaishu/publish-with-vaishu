@@ -13,7 +13,7 @@ export function BookCard({ book }: { book: BookWithRelations }) {
 
   return (
     <Link href={`/books/${book.id}`} className="group block">
-      <div className="relative aspect-[3/4] overflow-hidden rounded-lg border border-hairline bg-bg-secondary transition-all duration-300 group-hover:-translate-y-1 group-hover:border-ink/25 group-hover:shadow-[0_8px_24px_-12px_rgba(0,0,0,0.18)]">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-xl border border-hairline bg-bg-secondary card-soft transition-all duration-300 group-hover:-translate-y-1 group-hover:border-indigo-200 group-hover:card-hover">
         <BookCover
           title={book.title}
           coverImage={book.cover_image}
@@ -22,20 +22,20 @@ export function BookCard({ book }: { book: BookWithRelations }) {
         />
 
         {outOfStock && (
-          <span className="absolute left-2 top-2 rounded-full bg-ink/80 px-2.5 py-1 text-[11px] font-medium text-white">
+          <span className="absolute left-2 top-2 rounded-full bg-ink/80 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-sm">
             Out of stock
           </span>
         )}
       </div>
 
       <div className="mt-3 space-y-0.5">
-        <h3 className="font-serif text-[15px] leading-snug text-ink">
+        <h3 className="font-serif text-[15px] leading-snug text-ink transition-colors group-hover:text-indigo-700">
           {book.title}
         </h3>
         {book.author?.name && (
           <p className="text-sm text-muted">{book.author.name}</p>
         )}
-        <p className="pt-1 text-sm font-medium text-ink">
+        <p className="pt-1 text-sm font-semibold text-ink">
           {formatPrice(book.price)}
         </p>
       </div>

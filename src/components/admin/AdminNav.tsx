@@ -33,7 +33,7 @@ export function AdminNav() {
             className={cn(
               "shrink-0 border-b-2 px-3 py-3 text-sm font-medium transition-colors",
               active
-                ? "border-ink text-ink"
+                ? "border-primary text-primary"
                 : "border-transparent text-muted hover:text-ink",
             )}
           >

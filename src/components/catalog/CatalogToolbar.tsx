@@ -149,10 +149,10 @@ function Chip({
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        "inline-flex shrink-0 items-center rounded-full border px-4 py-2.5 text-sm font-medium transition-colors tap-target",
+        "inline-flex shrink-0 items-center rounded-full border px-4 py-2.5 text-sm font-medium transition-all duration-200 tap-target",
         active
-          ? "border-ink bg-ink text-white"
-          : "border-hairline text-ink hover:bg-bg-secondary",
+          ? "border-primary bg-primary text-white card-soft"
+          : "border-hairline bg-bg text-ink hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700",
       )}
     >
       {children}

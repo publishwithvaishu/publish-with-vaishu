@@ -4,7 +4,7 @@ import { Footer } from "@/components/home/Footer";
 import { MobileNav } from "@/components/MobileNav";
 import { Container } from "@/components/ui/Container";
 import { CheckoutClient } from "@/components/checkout/CheckoutClient";
-import { requireUser } from "@/lib/auth/session";
+import { requireDbUser } from "@/lib/auth/session";
 import { listAddresses } from "@/lib/auth/addresses";
 import { razorpayConfigured } from "@/lib/payments/razorpay";
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Checkout" };
 export const dynamic = "force-dynamic";
 
 export default async function CheckoutPage() {
-  const user = await requireUser();
+  const user = await requireDbUser();
   const addresses = await listAddresses(user.id);
 
   return (

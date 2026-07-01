@@ -1,17 +1,29 @@
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 
-type Variant = "primary" | "outline";
+type Variant =
+  | "primary"
+  | "outline"
+  | "secondary"
+  | "danger"
+  | "success";
 type Size = "md" | "lg";
 
 const base =
   "inline-flex items-center justify-center gap-2 rounded-full font-medium " +
-  "tap-target transition-colors duration-200 focus-visible:outline-2 " +
-  "focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40";
+  "tap-target transition-all duration-200 active:scale-[0.99] " +
+  "focus-visible:outline-2 focus-visible:outline-offset-2 " +
+  "disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-primary text-white hover:bg-ink/90",
-  outline: "border border-hairline text-ink bg-transparent hover:bg-bg-secondary",
+  primary:
+    "bg-primary text-white card-soft hover:bg-indigo-700 hover:shadow-md",
+  secondary:
+    "bg-bg text-ink border border-hairline card-soft hover:bg-bg-secondary",
+  outline:
+    "border border-hairline text-ink bg-transparent hover:bg-bg-secondary hover:border-ink/20",
+  danger: "bg-red-600 text-white card-soft hover:bg-red-700",
+  success: "bg-emerald-600 text-white card-soft hover:bg-emerald-700",
 };
 
 const sizes: Record<Size, string> = {

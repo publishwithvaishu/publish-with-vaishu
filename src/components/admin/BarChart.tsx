@@ -28,7 +28,7 @@ export function BarChart({
             title={`${d.label}: ${formatValue(d.value)}`}
           >
             <div
-              className="w-full rounded-t bg-ink/80 transition-colors group-hover:bg-ink"
+              className="w-full rounded-t-md bg-indigo-500 transition-all duration-200 group-hover:bg-indigo-600"
               style={{
                 height: `${Math.max((d.value / max) * 100, d.value > 0 ? 3 : 0)}%`,
               }}

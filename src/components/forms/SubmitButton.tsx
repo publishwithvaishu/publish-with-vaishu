@@ -23,9 +23,9 @@ export function SubmitButton({
       disabled={pending}
       aria-busy={pending}
       className={cn(
-        "inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-medium transition-colors tap-target disabled:opacity-60",
+        "inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-medium transition-all duration-200 active:scale-[0.99] tap-target disabled:opacity-60 disabled:active:scale-100",
         variant === "primary"
-          ? "bg-primary text-white hover:bg-ink/90"
+          ? "bg-primary text-white card-soft hover:bg-indigo-700 hover:shadow-md"
           : "border border-hairline text-ink hover:bg-bg-secondary",
         className,
       )}

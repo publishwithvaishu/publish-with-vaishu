@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { requireUser } from "@/lib/auth/session";
+import { requireDbUser } from "@/lib/auth/session";
 import { getAddress } from "@/lib/auth/addresses";
 import { createOrder } from "@/lib/orders/orders";
 
@@ -26,7 +26,7 @@ export type CreateOrderInput = z.infer<typeof inputSchema>;
 export async function createOrderAction(
   input: CreateOrderInput,
 ): Promise<{ ok: boolean; orderId?: string; error?: string }> {
-  const user = await requireUser();
+  const user = await requireDbUser();
 
   const parsed = inputSchema.safeParse(input);
   if (!parsed.success) {

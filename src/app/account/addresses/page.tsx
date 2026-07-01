@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { ConfirmSubmit } from "@/components/forms/ConfirmSubmit";
-import { requireUser } from "@/lib/auth/session";
+import { requireDbUser } from "@/lib/auth/session";
 import { listAddresses, type Address } from "@/lib/auth/addresses";
 import {
   deleteAddressAction,
@@ -12,7 +12,7 @@ import {
 export const metadata: Metadata = { title: "Addresses" };
 
 export default async function AddressesPage() {
-  const user = await requireUser();
+  const user = await requireDbUser();
   const addresses = await listAddresses(user.id);
 
   return (

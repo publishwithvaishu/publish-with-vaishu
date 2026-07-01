@@ -44,8 +44,10 @@ export function FormField({
         aria-invalid={!!error}
         aria-describedby={error ? `${id}-error` : undefined}
         className={cn(
-          "mt-1.5 h-12 w-full rounded-xl border bg-bg px-4 text-sm text-ink placeholder:text-muted focus:outline-none",
-          error ? "border-red-500 focus:border-red-500" : "border-hairline focus:border-ink",
+          "mt-1.5 h-12 w-full rounded-xl border bg-bg px-4 text-sm text-ink shadow-[0_1px_2px_rgba(15,23,42,0.03)] placeholder:text-muted transition-all duration-200 focus:outline-none focus:ring-4",
+          error
+            ? "border-red-400 focus:border-red-500 focus:ring-red-100"
+            : "border-hairline focus:border-indigo-500 focus:ring-indigo-100",
         )}
       />
       {hint && !error && <p className="mt-1 text-xs text-muted">{hint}</p>}

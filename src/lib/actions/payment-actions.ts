@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { requireUser } from "@/lib/auth/session";
+import { requireDbUser } from "@/lib/auth/session";
 import { getAddress } from "@/lib/auth/addresses";
 import {
   createOrder,
@@ -52,7 +52,7 @@ export async function createRazorpayOrderAction(input: {
   amount?: number;
   currency?: string;
 }> {
-  const user = await requireUser();
+  const user = await requireDbUser();
   if (!razorpayConfigured()) {
     return { ok: false, error: "Online payment is not available right now." };
   }
@@ -115,7 +115,7 @@ export async function verifyPaymentAction(input: {
   razorpayPaymentId: string;
   razorpaySignature: string;
 }): Promise<{ ok: boolean; orderId?: string; error?: string }> {
-  const user = await requireUser();
+  const user = await requireDbUser();
 
   const parsed = verifySchema.safeParse(input);
   if (!parsed.success) {

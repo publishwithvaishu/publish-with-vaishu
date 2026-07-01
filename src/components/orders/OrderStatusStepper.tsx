@@ -56,7 +56,7 @@ export function OrderStatusStepper({
               <span
                 className={cn(
                   "absolute left-[11px] top-6 h-[calc(100%-12px)] w-px",
-                  i < currentIndex ? "bg-ink" : "bg-hairline",
+                  i < currentIndex ? "bg-primary" : "bg-hairline",
                 )}
                 aria-hidden
               />
@@ -65,7 +65,9 @@ export function OrderStatusStepper({
             <span
               className={cn(
                 "relative z-10 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border",
-                done ? "border-ink bg-ink text-white" : "border-hairline bg-bg",
+                done
+                  ? "border-primary bg-primary text-white"
+                  : "border-hairline bg-bg",
               )}
               aria-hidden
             >

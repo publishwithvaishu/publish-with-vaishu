@@ -16,14 +16,14 @@ export function MobileNav() {
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-hairline bg-bg/90 backdrop-blur-md md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-hairline bg-bg/80 shadow-[0_-1px_2px_rgba(15,23,42,0.04)] backdrop-blur-xl md:hidden"
     >
       <ul className="mx-auto flex max-w-md items-stretch justify-around">
         {items.map(({ label, href, icon: Icon, badge }) => (
           <li key={label} className="flex-1">
             <Link
               href={href}
-              className="flex flex-col items-center justify-center gap-1 py-2 text-[11px] font-medium text-muted tap-target hover:text-ink"
+              className="flex flex-col items-center justify-center gap-1 py-2 text-[11px] font-medium text-muted tap-target hover:text-indigo-600"
             >
               <span className="relative">
                 <Icon />

@@ -2,17 +2,32 @@
 
 /* ------------------------------------------------------------------ */
 /*  Publish With Vaishu — design tokens                                */
-/*  Apple / Notion / Stripe Press inspired. Light theme only.          */
+/*  Premium light SaaS (Stripe / Linear / Vercel). White-first,        */
+/*  indigo accent, soft shadows. Never a dark theme.                   */
 /* ------------------------------------------------------------------ */
 
 @theme {
-  /* Colours */
-  --color-bg: #ffffff;
-  --color-bg-secondary: #fcfbf7;
-  --color-ink: #1d1d1f;
-  --color-muted: #6e6e73;
-  --color-hairline: #e8e8e6;
-  --color-primary: #000000;
+  /* Surfaces */
+  --color-bg: #ffffff; /* cards, inputs, navbar */
+  --color-bg-secondary: #f8fafc; /* subtle fills / hovers (cool slate-50) */
+  --color-canvas: #f9fafb; /* page background */
+
+  /* Text */
+  --color-ink: #111827; /* headings / body (slate-900) */
+  --color-muted: #6b7280; /* secondary text (slate-500) */
+
+  /* Lines */
+  --color-hairline: #e5e7eb; /* borders (gray-200) */
+
+  /* Accent (indigo) — buttons + active items */
+  --color-primary: #4f46e5; /* indigo-600 */
+  --color-primary-hover: #4338ca; /* indigo-700 */
+
+  /* Soft elevation */
+  --shadow-soft: 0 1px 2px 0 rgba(15, 23, 42, 0.04),
+    0 1px 3px 0 rgba(15, 23, 42, 0.06);
+  --shadow-card: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+  --shadow-card-hover: 0 8px 24px -12px rgba(15, 23, 42, 0.18);
 
   /* Typography */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
@@ -21,29 +36,60 @@
     "Times New Roman", serif;
 }
 
-/* Light theme only — never invert for dark mode (spec §4). */
+/* Light theme only — never invert for dark mode. */
 html {
   color-scheme: light;
   -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--color-bg);
+  background: var(--color-canvas);
   color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* Visible, on-brand focus ring for accessibility. */
-:focus-visible {
-  outline: 2px solid var(--color-ink);
-  outline-offset: 2px;
-  border-radius: 4px;
+/* Smooth, subtle transitions on interactive elements (200ms). */
+@layer base {
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  summary,
+  label,
+  [role="button"] {
+    transition-property: color, background-color, border-color, box-shadow,
+      transform, opacity;
+    transition-duration: 200ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Default soft elevation for bordered cards/panels. Zero-specificity, so any
+     element that sets its own shadow utility still wins. */
+  :where(.rounded-2xl.border-hairline, .rounded-xl.border-hairline) {
+    box-shadow: var(--shadow-card);
+  }
 }
 
-/* Minimum 44px tap target helper (spec §4). */
+/* Visible, on-brand (indigo) focus ring for accessibility. */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Minimum 44px tap target helper. */
 @utility tap-target {
   min-height: 44px;
   min-width: 44px;
+}
+
+/* Soft card elevation helpers. */
+@utility card-soft {
+  box-shadow: var(--shadow-card);
+}
+@utility card-hover {
+  box-shadow: var(--shadow-card-hover);
 }
