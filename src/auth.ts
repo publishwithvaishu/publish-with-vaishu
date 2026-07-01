@@ -24,8 +24,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const { email, password } = parsed.data;
 
         // Admin: single owner account via env (ADMIN_EMAIL + ADMIN_PASSWORD_HASH).
-        const adminEmail = process.env.ADMIN_EMAIL?.toLowerCase();
-        const adminHash = process.env.ADMIN_PASSWORD_HASH;
+        // Normalise the hash: hosting env UIs (and some shells) can store a
+        // bcrypt hash with backslash-escaped "$" ("\$2b\$..."), or wrapped in
+        // quotes. bcrypt.compare then always fails and admin login breaks in
+        // production while working locally. Valid bcrypt hashes never contain
+        // backslashes or quotes, so stripping them is safe and admin-only.
+        const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+        const adminHash = process.env.ADMIN_PASSWORD_HASH?.trim()
+          .replace(/^["']|["']$/g, "")
+          .replace(/\\/g, "");
         if (adminEmail && adminHash && email === adminEmail) {
           const ok = await bcrypt.compare(password, adminHash);
           if (!ok) return null;
