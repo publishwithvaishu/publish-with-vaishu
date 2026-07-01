@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import { requireUser } from "@/lib/auth/session";
 import { getUserById, updateProfile, setPassword } from "@/lib/auth/users";
 import { createToken } from "@/lib/auth/tokens";
+import { getSiteUrl } from "@/lib/site-url";
 import { sendEmail, verifyEmailContent } from "@/lib/email/mailer";
 import {
   profileSchema,
@@ -14,7 +15,7 @@ import {
 import type { ActionState } from "@/lib/forms/types";
 
 const str = (fd: FormData, k: string) => String(fd.get(k) ?? "");
-const siteUrl = () => process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const siteUrl = () => getSiteUrl();
 
 export async function updateProfileAction(
   _prev: ActionState,

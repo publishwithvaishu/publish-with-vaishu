@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/lib/cart/CartContext";
+import { getSiteUrl } from "@/lib/site-url";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -15,7 +16,7 @@ const sourceSerif = Source_Serif_4({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const siteUrl = getSiteUrl();
 const siteName = "Publish With Vaishu";
 const siteDescription =
   "An academic publishing house bringing University of Madras syllabus titles — B.Com, BBA, BCA, M.Sc and research publications — to students across India.";

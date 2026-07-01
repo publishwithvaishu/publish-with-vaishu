@@ -15,9 +15,10 @@ import { createUser, emailExists, getUserByEmail, setPassword } from "@/lib/auth
 import { createToken, consumeToken } from "@/lib/auth/tokens";
 import { sendEmail, verifyEmailContent, resetPasswordContent } from "@/lib/email/mailer";
 import { rateLimit, getClientIp } from "@/lib/auth/rate-limit";
+import { getSiteUrl } from "@/lib/site-url";
 import type { ActionState } from "@/lib/forms/types";
 
-const siteUrl = () => process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const siteUrl = () => getSiteUrl();
 const str = (fd: FormData, k: string) => String(fd.get(k) ?? "");
 
 async function sendVerificationEmail(userId: string, email: string) {

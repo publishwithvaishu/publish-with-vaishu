@@ -21,9 +21,10 @@ import {
   markPaymentFailed,
 } from "@/lib/payments/payments";
 import { sendEmail, orderConfirmationContent } from "@/lib/email/mailer";
+import { getSiteUrl } from "@/lib/site-url";
 import { formatPrice } from "@/lib/format";
 
-const siteUrl = () => process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const siteUrl = () => getSiteUrl();
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
