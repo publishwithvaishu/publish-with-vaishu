@@ -8,6 +8,13 @@ const PROTECTED_PREFIXES = ["/account", "/orders", "/checkout"];
  * runs only in the Node runtime.
  */
 export const authConfig = {
+  // Trust the deployment host. Without this, Auth.js v5 throws `UntrustedHost`
+  // in production (self-hosted / custom domains / any host it can't auto-detect),
+  // which breaks every auth endpoint AND the server-side `auth()` calls that
+  // protected pages (/account, /checkout) make — surfacing as a generic
+  // "server-side exception". Dev defaults trustHost to true, so it only bites
+  // in production. Can also be set via AUTH_TRUST_HOST=true.
+  trustHost: true,
   pages: { signIn: "/login" },
   session: { strategy: "jwt" },
   providers: [],

@@ -1,8 +1,11 @@
 import "server-only";
 import { Resend } from "resend";
 
+// Professional sender on the Publish With Vaishu domain. The domain must be
+// verified in Resend (SPF/DKIM DNS records) for delivery to arbitrary
+// recipients; override per-environment with RESEND_FROM if needed.
 const FROM =
-  process.env.RESEND_FROM ?? "Publish With Vaishu <onboarding@resend.dev>";
+  process.env.RESEND_FROM ?? "Publish With Vaishu <noreply@publishwithvaishu.in>";
 
 /**
  * Send a transactional email. If RESEND_API_KEY is not configured (e.g. local

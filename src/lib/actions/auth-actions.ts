@@ -69,7 +69,14 @@ export async function registerAction(
     passwordHash,
   });
 
-  await sendVerificationEmail(user.id, email);
+  // Never let an email-provider issue (outage, unverified sender domain, etc.)
+  // fail an otherwise-successful registration. The account is created; the user
+  // can request a fresh verification link from their account page.
+  try {
+    await sendVerificationEmail(user.id, email);
+  } catch (e) {
+    console.error("Verification email failed to send:", e);
+  }
 
   // Send them to sign in (also signals the verification email was sent).
   redirect("/login?registered=1");
@@ -141,14 +148,20 @@ export async function forgotPasswordAction(
 
   const user = await getUserByEmail(parsed.data.email);
   if (user) {
-    const token = await createToken({
-      userId: user.id,
-      email: user.email,
-      type: "reset",
-      ttlMinutes: 60,
-    });
-    const url = `${siteUrl()}/reset-password?token=${token}`;
-    await sendEmail({ to: user.email, ...resetPasswordContent(url) });
+    // Keep the response identical whether or not the email actually sends, so
+    // an email-provider issue never breaks the flow or leaks account existence.
+    try {
+      const token = await createToken({
+        userId: user.id,
+        email: user.email,
+        type: "reset",
+        ttlMinutes: 60,
+      });
+      const url = `${siteUrl()}/reset-password?token=${token}`;
+      await sendEmail({ to: user.email, ...resetPasswordContent(url) });
+    } catch (e) {
+      console.error("Password reset email failed to send:", e);
+    }
   }
 
   return {
