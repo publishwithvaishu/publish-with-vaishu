@@ -6,8 +6,16 @@ import { MobileNav } from "@/components/MobileNav";
 import { Container } from "@/components/ui/Container";
 
 export const metadata: Metadata = {
-  title: "Contact",
-  description: "Get in touch with Publish With Vaishu.",
+  title: "Contact — Publish With Vaishu, Chennai",
+  description:
+    "Contact Publish With Vaishu for academic book enquiries, availability and bulk/department orders. Based in Chennai, India.",
+  alternates: { canonical: "/contact" },
+  openGraph: {
+    title: "Contact · Publish With Vaishu",
+    description:
+      "Get in touch with Publish With Vaishu — academic book publisher in Chennai, India.",
+    url: "/contact",
+  },
 };
 
 // Public support address. Replace with the publisher's real inbox before launch.

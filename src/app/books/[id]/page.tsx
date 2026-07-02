@@ -10,6 +10,7 @@ import { BookCard } from "@/components/ui/BookCard";
 import { BookCover } from "@/components/ui/BookCover";
 import { AddToCartButtons } from "@/components/book/AddToCartButtons";
 import { getBookById, getRelatedBooks } from "@/lib/queries";
+import { getSiteUrl } from "@/lib/site-url";
 import { formatPrice } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
@@ -41,10 +42,12 @@ export async function generateMetadata({
   return {
     title: book.title,
     description,
+    alternates: { canonical: `/books/${id}` },
     openGraph: {
       type: "article",
       title: `${book.title} · Publish With Vaishu`,
       description,
+      url: `/books/${id}`,
       images,
     },
     twitter: {
@@ -69,6 +72,35 @@ export default async function BookDetailPage({
   const related = await getRelatedBooks(book.category_id, book.id);
   const inStock = book.stock > 0;
 
+  // Structured data for the book (Google rich results for products/books).
+  const canonicalUrl = `${getSiteUrl()}/books/${book.id}`;
+  const bookJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Book",
+    name: book.title,
+    ...(book.subtitle ? { alternateName: book.subtitle } : {}),
+    ...(book.author?.name
+      ? { author: { "@type": "Person", name: book.author.name } }
+      : {}),
+    ...(book.isbn ? { isbn: book.isbn } : {}),
+    ...(book.language ? { inLanguage: book.language } : {}),
+    ...(book.pages ? { numberOfPages: book.pages } : {}),
+    ...(isRealImage(book.cover_image) ? { image: book.cover_image } : {}),
+    ...(book.description ? { description: book.description.slice(0, 500) } : {}),
+    bookFormat: "https://schema.org/Paperback",
+    url: canonicalUrl,
+    publisher: { "@type": "Organization", name: "Publish With Vaishu" },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "INR",
+      price: book.price,
+      availability: inStock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      url: canonicalUrl,
+    },
+  };
+
   const facts: { label: string; value: string | null }[] = [
     { label: "ISBN", value: book.isbn },
     { label: "University", value: book.university },
@@ -81,6 +113,10 @@ export default async function BookDetailPage({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(bookJsonLd) }}
+      />
       <Header />
 
       <main className="pb-24 md:pb-0">

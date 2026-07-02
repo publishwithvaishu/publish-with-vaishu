@@ -5,9 +5,16 @@ import { MobileNav } from "@/components/MobileNav";
 import { Container } from "@/components/ui/Container";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "About — Academic Book Publisher in Chennai",
   description:
-    "Publish With Vaishu is an academic publishing house for University of Madras syllabus titles and research publications.",
+    "About Publish With Vaishu — an academic book publisher based in Chennai, India, producing University of Madras syllabus titles and research publications written by faculty.",
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "About · Publish With Vaishu",
+    description:
+      "An academic book publisher in Chennai, India — University of Madras syllabus titles and research publications.",
+    url: "/about",
+  },
 };
 
 export default function AboutPage() {

@@ -12,7 +12,7 @@ export function Hero() {
       <div className="relative h-[58vh] min-h-[400px] w-full overflow-hidden sm:h-[62vh]">
         <Image
           src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1920&q=80"
-          alt="Shelves of academic books"
+          alt="Publish With Vaishu — shelves of academic books and University of Madras syllabus titles"
           fill
           priority
           sizes="100vw"

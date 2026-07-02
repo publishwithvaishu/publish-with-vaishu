@@ -18,40 +18,126 @@ const sourceSerif = Source_Serif_4({
 
 const siteUrl = getSiteUrl();
 const siteName = "Publish With Vaishu";
+const siteTitle =
+  "Publish With Vaishu — Book Publishing in Chennai, India";
 const siteDescription =
-  "An academic publishing house bringing University of Madras syllabus titles — B.Com, BBA, BCA, M.Sc and research publications — to students across India.";
+  "Publish With Vaishu is an academic book publisher in Chennai, India — University of Madras syllabus titles (B.Com, BBA, BCA, M.Sc) and research publications, written by faculty and delivered across India.";
+// Default social share image (absolute URL). Replace with a branded 1200×630
+// asset when available (see remaining SEO steps).
+const ogImage =
+  "https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1200&h=630&q=80";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Publish With Vaishu — Academic Books, Done Right",
+    default: siteTitle,
     template: "%s · Publish With Vaishu",
   },
   description: siteDescription,
   applicationName: siteName,
+  alternates: { canonical: "/" },
   keywords: [
-    "academic books",
-    "University of Madras",
+    "Publish With Vaishu",
+    "book publishing",
+    "book publishing India",
+    "book publishing Chennai",
+    "Tamil book publishing",
+    "self publishing",
+    "publish your book",
+    "author publishing",
+    "ISBN registration",
+    "book printing",
+    "academic book publisher",
+    "University of Madras textbooks",
     "B.Com",
     "BBA",
     "BCA",
     "M.Sc",
-    "textbooks",
-    "Publish With Vaishu",
   ],
+  authors: [{ name: siteName }],
+  creator: siteName,
+  publisher: siteName,
+  category: "Books & Publishing",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  verification: process.env.GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+    : undefined,
   openGraph: {
     type: "website",
     siteName,
-    title: "Publish With Vaishu — Academic Books, Done Right",
+    title: siteTitle,
     description: siteDescription,
     url: siteUrl,
     locale: "en_IN",
+    images: [{ url: ogImage, width: 1200, height: 630, alt: siteName }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Publish With Vaishu — Academic Books, Done Right",
+    title: siteTitle,
     description: siteDescription,
+    images: [ogImage],
   },
+};
+
+// Site-wide structured data (Organization, WebSite with search, BookStore).
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${siteUrl}/#organization`,
+      name: siteName,
+      url: siteUrl,
+      logo: `${siteUrl}/icon.png`,
+      description: siteDescription,
+      email: "support@publishwithvaishu.in",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Chennai",
+        addressRegion: "Tamil Nadu",
+        addressCountry: "IN",
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      name: siteName,
+      url: siteUrl,
+      publisher: { "@id": `${siteUrl}/#organization` },
+      inLanguage: "en-IN",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: `${siteUrl}/books?q={search_term_string}`,
+        "query-input": "required name=search_term_string",
+      },
+    },
+    {
+      "@type": "BookStore",
+      "@id": `${siteUrl}/#bookstore`,
+      name: siteName,
+      url: siteUrl,
+      image: ogImage,
+      description: siteDescription,
+      priceRange: "₹₹",
+      areaServed: "IN",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Chennai",
+        addressRegion: "Tamil Nadu",
+        addressCountry: "IN",
+      },
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -65,6 +151,10 @@ export default function RootLayout({
       className={`${inter.variable} ${sourceSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-bg text-ink">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <CartProvider>{children}</CartProvider>
       </body>
     </html>

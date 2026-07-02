@@ -194,6 +194,21 @@ export async function getBooks(params: CatalogParams): Promise<CatalogResult> {
   };
 }
 
+/** Minimal published-book list (id + timestamp) for the XML sitemap. */
+export async function getPublishedBooksForSitemap(): Promise<
+  { id: string; created_at: string | null }[]
+> {
+  const supabase = getSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("books")
+    .select("id, created_at")
+    .eq("published", true)
+    .order("created_at", { ascending: false })
+    .limit(5000);
+  if (error) throw new Error(`Failed to load books for sitemap: ${error.message}`);
+  return (data ?? []) as { id: string; created_at: string | null }[];
+}
+
 /** A single book with its full author record + category, for the detail page. */
 export async function getBookById(id: string): Promise<BookDetail | null> {
   const supabase = getSupabaseServerClient();

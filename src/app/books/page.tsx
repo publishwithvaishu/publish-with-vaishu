@@ -11,14 +11,25 @@ import type { CatalogParams, SortOption } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
+const BOOKS_DESCRIPTION =
+  "Browse and buy academic books from Publish With Vaishu — University of Madras syllabus titles (B.Com, BBA, BCA, M.Sc). Search by title, author or ISBN, filter by course and price, delivered across India.";
+
 export const metadata: Metadata = {
-  title: "Books",
-  description:
-    "Browse University of Madras syllabus titles — search, filter by course and price, and sort.",
+  title: "Books — Academic Titles & Textbooks",
+  description: BOOKS_DESCRIPTION,
+  alternates: { canonical: "/books" },
+  keywords: [
+    "academic books",
+    "textbooks",
+    "University of Madras books",
+    "book publishing India",
+    "buy academic books online",
+    "Publish With Vaishu",
+  ],
   openGraph: {
     title: "Books · Publish With Vaishu",
-    description:
-      "Browse University of Madras syllabus titles — search, filter by course and price, and sort.",
+    description: BOOKS_DESCRIPTION,
+    url: "/books",
   },
 };
 
