@@ -155,7 +155,12 @@ export async function deleteBookImageAction(formData: FormData): Promise<void> {
   const imageId = str(formData, "imageId");
   const bookId = str(formData, "bookId");
   if (imageId) {
-    await adminDeleteBookImage(imageId);
+    try {
+      await adminDeleteBookImage(imageId);
+    } catch (e) {
+      console.error("deleteBookImageAction failed:", e);
+      return;
+    }
     if (bookId) {
       revalidatePath(`/admin/books/${bookId}/edit`);
       revalidatePath(`/books/${bookId}`);

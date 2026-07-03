@@ -199,19 +199,22 @@ export interface BookImage {
 }
 
 export async function adminGetBookImages(bookId: string): Promise<BookImage[]> {
-  const supabase = getSupabaseAdminClient();
-  const { data, error } = await supabase
-    .from("book_images")
-    .select("id, url")
-    .eq("book_id", bookId)
-    .order("position", { ascending: true });
-  // Degrade to "no extra images" rather than crash the whole edit page —
-  // covers the window before migration 0008 has been run.
-  if (error) {
-    console.error("adminGetBookImages failed:", error.message);
+  // Wrapped in try/catch (not just checking `error`) so ANY failure mode —
+  // including the table not existing yet before migration 0008 has run —
+  // degrades to "no extra images" instead of crashing the whole edit page.
+  try {
+    const supabase = getSupabaseAdminClient();
+    const { data, error } = await supabase
+      .from("book_images")
+      .select("id, url")
+      .eq("book_id", bookId)
+      .order("position", { ascending: true });
+    if (error) throw new Error(error.message);
+    return (data ?? []) as BookImage[];
+  } catch (e) {
+    console.error("adminGetBookImages failed:", e);
     return [];
   }
-  return (data ?? []) as BookImage[];
 }
 
 /** Append images to a book's gallery, positioned after any existing ones. */

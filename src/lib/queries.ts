@@ -227,20 +227,23 @@ export async function getBookById(id: string): Promise<BookDetail | null> {
 export async function getBookImages(
   bookId: string,
 ): Promise<{ id: string; url: string }[]> {
-  const supabase = getSupabaseServerClient();
-  const { data, error } = await supabase
-    .from("book_images")
-    .select("id, url")
-    .eq("book_id", bookId)
-    .order("position", { ascending: true });
-  // Degrade to "no extra images" (single-cover page, today's behavior)
-  // rather than crash the book page — covers the window before migration
-  // 0008 has been run.
-  if (error) {
-    console.error("getBookImages failed:", error.message);
+  // Wrapped in try/catch (not just checking `error`) so ANY failure mode —
+  // including the table not existing yet before migration 0008 has run —
+  // degrades to "no extra images" (single-cover page, today's behavior)
+  // instead of crashing the book page.
+  try {
+    const supabase = getSupabaseServerClient();
+    const { data, error } = await supabase
+      .from("book_images")
+      .select("id, url")
+      .eq("book_id", bookId)
+      .order("position", { ascending: true });
+    if (error) throw new Error(error.message);
+    return (data ?? []) as { id: string; url: string }[];
+  } catch (e) {
+    console.error("getBookImages failed:", e);
     return [];
   }
-  return (data ?? []) as { id: string; url: string }[];
 }
 
 /** Books from the same category (excluding the current book). */
