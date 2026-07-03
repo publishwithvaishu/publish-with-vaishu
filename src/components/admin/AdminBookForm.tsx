@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { FormField } from "@/components/forms/FormField";
 import { FormAlert } from "@/components/forms/FormAlert";
 import { SubmitButton } from "@/components/forms/SubmitButton";
@@ -90,17 +90,7 @@ export function AdminBookForm({
         />
       </div>
 
-      <FormField
-        label="Delivery charge (₹)"
-        name="delivery_charge"
-        type="number"
-        inputMode="numeric"
-        defaultValue={
-          book?.delivery_charge != null ? String(book.delivery_charge) : ""
-        }
-        error={f.delivery_charge}
-        hint="Leave blank for the automatic charge (₹49, free above ₹500). Enter 0 for free delivery on this book, or a custom amount to always charge that much."
-      />
+      <DeliveryChargeField book={book} error={f.delivery_charge} />
 
       <div className="grid gap-5 sm:grid-cols-2">
         <FormField label="ISBN" name="isbn" defaultValue={book?.isbn ?? ""} error={f.isbn} />
@@ -203,6 +193,105 @@ function Select({
         ))}
       </select>
     </div>
+  );
+}
+
+type DeliveryMode = "auto" | "free" | "fixed";
+
+function DeliveryChargeField({
+  book,
+  error,
+}: {
+  book?: AdminBook;
+  error?: string;
+}) {
+  const initialMode: DeliveryMode =
+    book?.delivery_charge == null
+      ? "auto"
+      : book.delivery_charge === 0
+        ? "free"
+        : "fixed";
+  const initialAmount =
+    book?.delivery_charge && book.delivery_charge > 0
+      ? String(book.delivery_charge)
+      : "";
+
+  const [mode, setMode] = useState<DeliveryMode>(initialMode);
+  const [amount, setAmount] = useState(initialAmount);
+
+  // Value actually submitted for name="delivery_charge": blank -> automatic
+  // (null server-side), "0" -> free, or the typed fixed amount.
+  const submittedValue = mode === "auto" ? "" : mode === "free" ? "0" : amount;
+
+  return (
+    <div>
+      <label className="block text-sm font-medium text-ink">
+        Delivery charge
+      </label>
+      <div className="mt-2 flex flex-wrap gap-x-6 gap-y-2">
+        <Radio
+          label="Automatic (default)"
+          checked={mode === "auto"}
+          onChange={() => setMode("auto")}
+        />
+        <Radio
+          label="Free delivery"
+          checked={mode === "free"}
+          onChange={() => setMode("free")}
+        />
+        <Radio
+          label="Fixed amount"
+          checked={mode === "fixed"}
+          onChange={() => setMode("fixed")}
+        />
+      </div>
+
+      {mode === "fixed" && (
+        <input
+          type="number"
+          inputMode="numeric"
+          min={0}
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          placeholder="e.g. 79"
+          aria-label="Fixed delivery charge amount in rupees"
+          className="mt-2.5 h-12 w-full max-w-[160px] rounded-xl border border-hairline bg-bg px-4 text-sm text-ink shadow-[0_1px_2px_rgba(15,23,42,0.03)] focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-100"
+        />
+      )}
+
+      {/* The mode/amount above are UI only; this hidden field is what the
+          server action actually reads. */}
+      <input type="hidden" name="delivery_charge" value={submittedValue} />
+
+      <p className="mt-1.5 text-xs text-muted">
+        Automatic uses the site default (₹49, free above ₹500). Free delivery
+        and fixed amount override that for this book.
+      </p>
+      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+    </div>
+  );
+}
+
+function Radio({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: () => void;
+}) {
+  return (
+    <label className="flex items-center gap-2 text-sm text-ink">
+      <input
+        type="radio"
+        name="delivery_mode_ui"
+        checked={checked}
+        onChange={onChange}
+        className="h-4 w-4 border-hairline text-primary focus:ring-indigo-100"
+      />
+      {label}
+    </label>
   );
 }
 
