@@ -17,7 +17,7 @@ export function CartView() {
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center rounded-2xl border border-hairline px-6 py-20 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-bg-secondary text-ink">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
           <svg
             width="28"
             height="28"

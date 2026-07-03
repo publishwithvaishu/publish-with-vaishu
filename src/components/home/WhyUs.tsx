@@ -1,4 +1,5 @@
 import { Container } from "@/components/ui/Container";
+import { accentAt } from "@/lib/accents";
 
 /**
  * Section 9 — Why students choose us: three short trust points.
@@ -6,16 +7,16 @@ import { Container } from "@/components/ui/Container";
  */
 const points = [
   {
-    title: "Written by the faculty who teach it.",
-    body: "Every title is authored by professors and researchers from University of Madras affiliated colleges — aligned to the exact syllabus you study.",
+    title: "Syllabus-aligned.",
+    body: "Every title maps exactly to the current University of Madras syllabus, unit by unit — study what will actually be examined, nothing extra.",
   },
   {
-    title: "Printed, not downloaded.",
-    body: "We publish physical books built to last a semester of underlining, dog-earing and re-reading. No screens, no logins, no eBooks.",
+    title: "Written by faculty.",
+    body: "Authored by the professors who teach these very papers, so explanations follow the way topics are taught and asked in exams.",
   },
   {
-    title: "Delivered to your doorstep.",
-    body: "Order online, pay securely, and track your shipment from our press to your hostel room or home address.",
+    title: "Delivered in 3–5 days.",
+    body: "Printed to order and shipped across Tamil Nadu in 3–5 working days, with cash on delivery available at checkout.",
   },
 ];
 
@@ -28,16 +29,25 @@ export function WhyUs() {
         </h2>
 
         <div className="mt-10 grid gap-10 sm:mt-14 sm:grid-cols-3 sm:gap-12">
-          {points.map((point) => (
-            <div key={point.title}>
-              <h3 className="font-serif text-xl leading-snug text-ink">
-                {point.title}
-              </h3>
-              <p className="mt-3 text-[15px] leading-relaxed text-muted">
-                {point.body}
-              </p>
-            </div>
-          ))}
+          {points.map((point, i) => {
+            const accent = accentAt(i);
+            return (
+              <div key={point.title}>
+                <span
+                  aria-hidden
+                  className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold ${accent.chipBg} ${accent.text}`}
+                >
+                  {i + 1}
+                </span>
+                <h3 className="mt-4 font-serif text-xl leading-snug text-ink">
+                  {point.title}
+                </h3>
+                <p className="mt-3 text-[15px] leading-relaxed text-muted">
+                  {point.body}
+                </p>
+              </div>
+            );
+          })}
         </div>
       </Container>
     </section>

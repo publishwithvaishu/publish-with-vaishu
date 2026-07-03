@@ -21,7 +21,7 @@ export async function TrustStats() {
   return (
     <section className="py-4">
       <Container>
-        <dl className="mx-auto grid max-w-2xl grid-cols-3 gap-4">
+        <dl className="mx-auto grid max-w-2xl grid-cols-3 gap-4 rounded-2xl border border-indigo-100 bg-indigo-50/60 px-4 py-8">
           {items.map((item) => (
             <div key={item.label} className="text-center">
               <dt className="sr-only">{item.label}</dt>

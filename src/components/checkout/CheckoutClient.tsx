@@ -182,7 +182,7 @@ export function CheckoutClient({
       <aside className="h-fit space-y-5 rounded-2xl border border-hairline p-6 lg:sticky lg:top-24">
         <h2 className="text-lg font-semibold text-ink">Order summary</h2>
         {toFree > 0 && (
-          <p className="rounded-lg bg-bg-secondary px-3 py-2 text-xs text-muted">
+          <p className="rounded-lg border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
             Add {formatPrice(toFree)} more for free delivery.
           </p>
         )}

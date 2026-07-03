@@ -9,7 +9,7 @@ import { Container } from "@/components/ui/Container";
 export function Hero() {
   return (
     <section className="relative">
-      <div className="relative h-[58vh] min-h-[400px] w-full overflow-hidden sm:h-[62vh]">
+      <div className="relative h-[66vh] min-h-[460px] w-full overflow-hidden sm:h-[72vh]">
         <Image
           src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1920&q=80"
           alt="Publish With Vaishu — shelves of academic books and University of Madras syllabus titles"
@@ -25,10 +25,10 @@ export function Hero() {
           <Container>
             <div className="max-w-2xl">
               <h1 className="text-balance font-semibold tracking-tight text-white">
-                <span className="block text-4xl leading-[1.05] sm:text-6xl">
+                <span className="block text-4xl leading-[1.05] sm:text-6xl lg:text-7xl">
                   Academic books,
                 </span>
-                <span className="block text-4xl leading-[1.05] text-white/65 sm:text-6xl">
+                <span className="block text-4xl leading-[1.05] text-white/65 sm:text-6xl lg:text-7xl">
                   done right.
                 </span>
               </h1>

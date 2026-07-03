@@ -1,6 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { CategoryChip } from "@/components/ui/CategoryChip";
 import { getCategories } from "@/lib/queries";
+import { pickAccent } from "@/lib/accents";
 
 /**
  * Section 6 — Browse by course: outline pill chips from live categories.
@@ -22,6 +23,7 @@ export async function CategoryChips() {
               key={category.id}
               label={category.name}
               href={`/books?category=${category.slug}`}
+              accent={pickAccent(category.name)}
             />
           ))}
         </div>

@@ -11,6 +11,7 @@ import { BookCover } from "@/components/ui/BookCover";
 import { AddToCartButtons } from "@/components/book/AddToCartButtons";
 import { getBookById, getRelatedBooks } from "@/lib/queries";
 import { getSiteUrl } from "@/lib/site-url";
+import { pickAccent } from "@/lib/accents";
 import { formatPrice } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
@@ -146,7 +147,10 @@ export default async function BookDetailPage({
               {book.category && (
                 <Link
                   href={`/books?category=${book.category.slug}`}
-                  className="inline-flex items-center rounded-full border border-hairline px-3 py-1 text-xs font-medium text-muted hover:bg-bg-secondary"
+                  className={(() => {
+                    const a = pickAccent(book.category.name);
+                    return `inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium hover:brightness-[0.98] ${a.bg} ${a.border} ${a.text}`;
+                  })()}
                 >
                   {book.category.name}
                 </Link>
@@ -187,7 +191,7 @@ export default async function BookDetailPage({
 
               {/* Quick facts */}
               {facts.length > 0 && (
-                <dl className="mt-10 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-hairline pt-8 sm:grid-cols-3">
+                <dl className="mt-10 grid grid-cols-2 gap-x-6 gap-y-4 rounded-xl border border-indigo-100 bg-indigo-50/40 p-6 sm:grid-cols-3">
                   {facts.map((f) => (
                     <div key={f.label}>
                       <dt className="text-xs uppercase tracking-wide text-muted">
@@ -313,8 +317,8 @@ function StockBadge({ inStock, stock }: { inStock: boolean; stock: number }) {
     );
   }
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-bg-secondary px-3 py-1 text-sm font-medium text-ink">
-      <span className="h-1.5 w-1.5 rounded-full bg-green-600" aria-hidden />
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
+      <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" aria-hidden />
       In stock
       {stock <= 5 ? ` — only ${stock} left` : ""}
     </span>

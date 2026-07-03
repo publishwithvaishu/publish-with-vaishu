@@ -3,6 +3,7 @@
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 import { cn } from "@/lib/cn";
+import { pickAccent } from "@/lib/accents";
 import type { Category, SortOption } from "@/lib/types";
 
 const SORTS: { value: SortOption; label: string }[] = [
@@ -79,6 +80,10 @@ export function CatalogToolbar({ categories }: { categories: Category[] }) {
             key={c.id}
             active={currentCategory === c.slug}
             onClick={() => navigate({ category: c.slug })}
+            accentClasses={(() => {
+              const a = pickAccent(c.name);
+              return `${a.bg} ${a.border} ${a.text}`;
+            })()}
           >
             {c.name}
           </Chip>
@@ -137,10 +142,13 @@ export function CatalogToolbar({ categories }: { categories: Category[] }) {
 function Chip({
   active,
   onClick,
+  accentClasses,
   children,
 }: {
   active: boolean;
   onClick: () => void;
+  /** Optional pastel resting tint (decorative); active state is always indigo. */
+  accentClasses?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -152,7 +160,9 @@ function Chip({
         "inline-flex shrink-0 items-center rounded-full border px-4 py-2.5 text-sm font-medium transition-all duration-200 tap-target",
         active
           ? "border-primary bg-primary text-white card-soft"
-          : "border-hairline bg-bg text-ink hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700",
+          : accentClasses
+            ? `${accentClasses} hover:brightness-[0.98]`
+            : "border-hairline bg-bg text-ink hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700",
       )}
     >
       {children}
