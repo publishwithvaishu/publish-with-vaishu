@@ -42,6 +42,7 @@ function extract(fd: FormData) {
     category_id: str(fd, "category_id"),
     is_featured: fd.get("is_featured") === "on",
     published: fd.get("published") === "on",
+    delivery_charge: str(fd, "delivery_charge"),
   };
 }
 
@@ -64,6 +65,7 @@ function buildWrite(v: BookFormValues): BookWrite {
     category_id: v.category_id ? v.category_id : null,
     is_featured: !!v.is_featured,
     published: !!v.published,
+    delivery_charge: v.delivery_charge ?? null,
   };
 }
 

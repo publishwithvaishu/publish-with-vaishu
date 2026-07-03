@@ -5,7 +5,7 @@ import type { Book } from "@/lib/types";
 const ADMIN_BOOK_SELECT =
   "id, title, subtitle, isbn, edition, university, course, semester, language, " +
   "pages, publication_date, price, stock, cover_image, description, is_featured, " +
-  "published, author_id, category_id, created_at, " +
+  "published, author_id, category_id, created_at, delivery_charge, " +
   "author:authors ( id, name ), category:categories ( id, name, slug )";
 
 export interface AdminBook extends Book {
@@ -33,6 +33,8 @@ export interface BookWrite {
   is_featured: boolean;
   published: boolean;
   cover_image?: string | null;
+  /** Manual per-book delivery charge. null = use the site default rule. */
+  delivery_charge: number | null;
 }
 
 const DEFAULT_PAGE_SIZE = 8;

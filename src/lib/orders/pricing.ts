@@ -19,6 +19,9 @@ export interface PriceBreakdown {
   tax: number;
   total: number;
   freeShipping: boolean;
+  /** True when the shipping fee came from a book's manual delivery_charge
+   *  override rather than the default flat-fee/free-threshold rule. */
+  usesManualDelivery: boolean;
 }
 
 export function computeTotals(subtotal: number): PriceBreakdown {
@@ -31,10 +34,51 @@ export function computeTotals(subtotal: number): PriceBreakdown {
     tax,
     total: subtotal + shipping + tax,
     freeShipping: subtotal > 0 && shipping === 0,
+    usesManualDelivery: false,
   };
 }
 
-/** Amount still needed to qualify for free shipping (0 if already free). */
+/**
+ * Item-aware totals: mirrors the place_order RPC's shipping rule (see
+ * supabase/migrations/0007_book_delivery_charge.sql). If any item carries an
+ * explicit delivery_charge (admin-set on that book — 0 means free, a positive
+ * number is a fixed fee), the order's shipping is the HIGHEST such charge
+ * among the cart's items, bypassing the default free-shipping threshold.
+ * Carts with no per-item overrides get the unchanged default behaviour.
+ */
+export function computeTotalsForItems(
+  items: { price: number; quantity: number; delivery_charge?: number | null }[],
+): PriceBreakdown {
+  const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+
+  const overrides = items
+    .map((i) => i.delivery_charge)
+    .filter((v): v is number => v !== null && v !== undefined);
+
+  if (subtotal <= 0) {
+    return { subtotal, shipping: 0, tax: 0, total: 0, freeShipping: false, usesManualDelivery: false };
+  }
+
+  if (overrides.length > 0) {
+    const shipping = Math.max(...overrides);
+    const tax = Math.round(subtotal * TAX_RATE * 100) / 100;
+    return {
+      subtotal,
+      shipping,
+      tax,
+      total: subtotal + shipping + tax,
+      freeShipping: shipping === 0,
+      usesManualDelivery: true,
+    };
+  }
+
+  return computeTotals(subtotal);
+}
+
+/**
+ * Amount still needed to qualify for free shipping (0 if already free or not
+ * applicable — e.g. a manual delivery override is in effect).
+ */
 export function amountToFreeShipping(subtotal: number): number {
   if (subtotal <= 0 || subtotal >= FREE_SHIPPING_THRESHOLD) return 0;
   return FREE_SHIPPING_THRESHOLD - subtotal;

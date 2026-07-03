@@ -176,6 +176,8 @@ export default async function BookDetailPage({
                 <StockBadge inStock={inStock} stock={book.stock} />
               </div>
 
+              <DeliveryChargeNote deliveryCharge={book.delivery_charge} />
+
               <div className="mt-8 max-w-md">
                 <AddToCartButtons
                   book={{
@@ -185,6 +187,7 @@ export default async function BookDetailPage({
                     cover_image: book.cover_image,
                     author_name: book.author?.name ?? null,
                     stock: book.stock,
+                    delivery_charge: book.delivery_charge,
                   }}
                 />
               </div>
@@ -322,5 +325,22 @@ function StockBadge({ inStock, stock }: { inStock: boolean; stock: number }) {
       In stock
       {stock <= 5 ? ` — only ${stock} left` : ""}
     </span>
+  );
+}
+
+/**
+ * Shows the admin's manual delivery charge for this book, when set.
+ * null (not set) -> nothing shown; the site default rule applies silently.
+ */
+function DeliveryChargeNote({ deliveryCharge }: { deliveryCharge: number | null }) {
+  if (deliveryCharge === null) return null;
+  return (
+    <p className="mt-3 text-sm text-muted">
+      {deliveryCharge === 0 ? (
+        <span className="font-medium text-emerald-700">Free delivery on this title</span>
+      ) : (
+        <>Delivery charge: <span className="font-medium text-ink">{formatPrice(deliveryCharge)}</span></>
+      )}
+    </p>
   );
 }

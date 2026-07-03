@@ -11,7 +11,7 @@ import type {
 
 // Columns selected for a book card, joined with author name + category.
 const BOOK_CARD_SELECT =
-  "id, title, subtitle, price, stock, cover_image, language, course, university, is_featured, " +
+  "id, title, subtitle, price, stock, cover_image, language, course, university, is_featured, delivery_charge, " +
   "author:authors ( id, name ), category:categories ( id, name, slug )";
 
 // Full set of columns + full author record for the detail page.

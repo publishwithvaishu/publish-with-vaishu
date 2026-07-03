@@ -17,6 +17,8 @@ export interface CartItem {
   author_name: string | null;
   stock: number;
   quantity: number;
+  /** Manual per-book delivery charge (null = use the site default rule). */
+  delivery_charge: number | null;
 }
 
 interface CartContextValue {

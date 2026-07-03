@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/lib/cart/CartContext";
+import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { getSiteUrl } from "@/lib/site-url";
 
 const inter = Inter({
@@ -156,6 +157,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <CartProvider>{children}</CartProvider>
+        <WhatsAppButton />
       </body>
     </html>
   );

@@ -48,6 +48,8 @@ export interface Book {
   author_id: string | null;
   category_id: string | null;
   created_at: string;
+  /** Manual per-book delivery charge. null = use the site default rule. */
+  delivery_charge: number | null;
 }
 
 // A book joined with its author + category, as used on the homepage.

@@ -41,6 +41,12 @@ export const bookSchema = z.object({
   category_id: uuidOrEmpty,
   is_featured: z.boolean().optional().default(false),
   published: z.boolean().optional().default(true),
+  // Manual per-book delivery charge. Blank = use the site default rule;
+  // 0 = free delivery for this book; a positive number = fixed charge.
+  delivery_charge: z.preprocess(
+    (v) => (v === "" || v == null ? undefined : Number(v)),
+    z.number().min(0, "Enter a valid amount").max(10000).optional(),
+  ),
 });
 
 export type BookFormValues = z.infer<typeof bookSchema>;

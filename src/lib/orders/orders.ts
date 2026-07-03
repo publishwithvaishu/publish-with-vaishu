@@ -4,7 +4,7 @@ import {
   SHIPPING_FEE,
   FREE_SHIPPING_THRESHOLD,
   TAX_RATE,
-  computeTotals,
+  computeTotalsForItems,
   type PriceBreakdown,
 } from "@/lib/orders/pricing";
 import type {
@@ -36,12 +36,12 @@ export async function priceCart(
   const ids = items.map((i) => i.book_id);
   const { data, error } = await supabase
     .from("books")
-    .select("id, price, stock, title")
+    .select("id, price, stock, title, delivery_charge")
     .in("id", ids);
   if (error) throw new Error(error.message);
 
   const byId = new Map((data ?? []).map((b) => [b.id as string, b]));
-  let subtotal = 0;
+  const priced: { price: number; quantity: number; delivery_charge: number | null }[] = [];
   for (const item of items) {
     const book = byId.get(item.book_id);
     if (!book) throw new Error("A book in your cart no longer exists.");
@@ -49,9 +49,13 @@ export async function priceCart(
     if ((book.stock as number) < item.quantity) {
       throw new Error(`Insufficient stock for "${book.title}"`);
     }
-    subtotal += (book.price as number) * item.quantity;
+    priced.push({
+      price: book.price as number,
+      quantity: item.quantity,
+      delivery_charge: (book.delivery_charge as number | null) ?? null,
+    });
   }
-  return computeTotals(subtotal);
+  return computeTotalsForItems(priced);
 }
 
 /** Mark an order paid and store its Razorpay identifiers. */

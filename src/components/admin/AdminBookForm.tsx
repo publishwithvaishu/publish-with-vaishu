@@ -90,6 +90,18 @@ export function AdminBookForm({
         />
       </div>
 
+      <FormField
+        label="Delivery charge (₹)"
+        name="delivery_charge"
+        type="number"
+        inputMode="numeric"
+        defaultValue={
+          book?.delivery_charge != null ? String(book.delivery_charge) : ""
+        }
+        error={f.delivery_charge}
+        hint="Leave blank for the automatic charge (₹49, free above ₹500). Enter 0 for free delivery on this book, or a custom amount to always charge that much."
+      />
+
       <div className="grid gap-5 sm:grid-cols-2">
         <FormField label="ISBN" name="isbn" defaultValue={book?.isbn ?? ""} error={f.isbn} />
         <FormField label="Edition" name="edition" defaultValue={book?.edition ?? ""} error={f.edition} />

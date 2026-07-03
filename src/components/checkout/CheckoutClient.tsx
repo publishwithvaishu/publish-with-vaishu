@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart/CartContext";
-import { computeTotals, amountToFreeShipping } from "@/lib/orders/pricing";
+import { computeTotalsForItems, amountToFreeShipping } from "@/lib/orders/pricing";
 import { createOrderAction } from "@/lib/actions/order-actions";
 import { OrderTotals } from "@/components/orders/OrderTotals";
 import { RazorpayButton } from "@/components/checkout/RazorpayButton";
@@ -53,8 +53,10 @@ export function CheckoutClient({
     );
   }
 
-  const totals = computeTotals(subtotal);
-  const toFree = amountToFreeShipping(subtotal);
+  const totals = computeTotalsForItems(items);
+  // The ₹500 free-shipping nudge only makes sense when no book in the cart
+  // has a manual delivery charge overriding that rule.
+  const toFree = totals.usesManualDelivery ? 0 : amountToFreeShipping(subtotal);
 
   async function placeOrder() {
     setError(null);
