@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminBookForm } from "@/components/admin/AdminBookForm";
 import { updateBookAction } from "@/lib/actions/admin-book-actions";
-import { adminGetBook, adminListAuthors } from "@/lib/admin/books";
+import { adminGetBook, adminListAuthors, adminGetBookImages } from "@/lib/admin/books";
 import { getCategories } from "@/lib/queries";
 
 export const metadata: Metadata = { title: "Edit book — Admin" };
@@ -20,10 +20,11 @@ export default async function EditBookPage({
   const { id } = await params;
   if (!UUID_RE.test(id)) notFound();
 
-  const [book, authors, categories] = await Promise.all([
+  const [book, authors, categories, images] = await Promise.all([
     adminGetBook(id),
     adminListAuthors(),
     getCategories(),
+    adminGetBookImages(id),
   ]);
   if (!book) notFound();
 
@@ -46,6 +47,7 @@ export default async function EditBookPage({
           authors={authors}
           categories={categories}
           book={book}
+          images={images}
           submitLabel="Save changes"
         />
       </div>

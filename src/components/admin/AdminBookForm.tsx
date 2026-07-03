@@ -1,11 +1,13 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { FormField } from "@/components/forms/FormField";
 import { FormAlert } from "@/components/forms/FormAlert";
 import { SubmitButton } from "@/components/forms/SubmitButton";
 import { initialActionState, type ActionState } from "@/lib/forms/types";
-import type { AdminBook } from "@/lib/admin/books";
+import { deleteBookImageAction } from "@/lib/actions/admin-book-actions";
+import type { AdminBook, BookImage } from "@/lib/admin/books";
 
 type Action = (prev: ActionState, formData: FormData) => Promise<ActionState>;
 type Option = { id: string; name: string };
@@ -15,16 +17,20 @@ export function AdminBookForm({
   authors,
   categories,
   book,
+  images = [],
   submitLabel,
 }: {
   action: Action;
   authors: Option[];
   categories: { id: string; name: string }[];
   book?: AdminBook;
+  images?: BookImage[];
   submitLabel: string;
 }) {
   const [state, formAction] = useActionState(action, initialActionState);
   const f = state.fieldErrors ?? {};
+  const router = useRouter();
+  const [, startTransition] = useTransition();
 
   return (
     <form action={formAction} className="space-y-5" noValidate>
@@ -140,6 +146,60 @@ export function AdminBookForm({
         />
         <p className="mt-1 text-xs text-muted">
           PNG or JPG, up to 5 MB. Optional — a typographic cover is used otherwise.
+        </p>
+      </div>
+
+      {/* Additional gallery images */}
+      <div>
+        <label htmlFor="field-gallery" className="block text-sm font-medium text-ink">
+          Additional images (gallery)
+        </label>
+
+        {images.length > 0 && (
+          <ul className="mt-2 flex flex-wrap gap-3">
+            {images.map((img) => (
+              <li key={img.id} className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={img.url}
+                  alt=""
+                  className="h-20 w-16 rounded-lg border border-hairline object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    // Call the server action directly with its own FormData
+                    // so removing an image never submits the main book form.
+                    const fd = new FormData();
+                    fd.set("imageId", img.id);
+                    if (book?.id) fd.set("bookId", book.id);
+                    startTransition(async () => {
+                      await deleteBookImageAction(fd);
+                      router.refresh();
+                    });
+                  }}
+                  aria-label="Remove image"
+                  className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-ink text-[11px] font-medium text-white hover:bg-ink/80"
+                >
+                  ×
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <input
+          id="field-gallery"
+          name="gallery"
+          type="file"
+          accept="image/*"
+          multiple
+          className="mt-2 block w-full text-sm text-muted file:mr-3 file:rounded-full file:border-0 file:bg-ink file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-ink/90"
+        />
+        <p className="mt-1 text-xs text-muted">
+          Shown as a swipeable gallery on the book&apos;s detail page — e.g. back
+          cover, extra photos. Select multiple files at once, or upload more
+          later by saving and coming back.
         </p>
       </div>
 

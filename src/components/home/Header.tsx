@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { CartCountBadge } from "@/components/cart/CartCountBadge";
+import { HeaderNav } from "@/components/home/HeaderNav";
 
 /** Section 1 — Header: logo wordmark + cart + account icon, hairline bottom border. */
 export function Header() {
@@ -17,11 +18,13 @@ export function Header() {
             </span>
           </Link>
 
+          <HeaderNav />
+
           <div className="flex items-center gap-1">
             <Link
               href="/cart"
               aria-label="Your cart"
-              className="relative flex items-center justify-center rounded-full text-muted tap-target hover:bg-indigo-50 hover:text-indigo-600"
+              className="relative flex items-center justify-center rounded-full text-muted tap-target hover:bg-indigo-50 hover:text-indigo-600 md:hidden"
             >
               <CartIcon />
               <CartCountBadge />

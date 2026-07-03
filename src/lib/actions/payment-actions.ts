@@ -20,8 +20,13 @@ import {
   markPaymentPaid,
   markPaymentFailed,
 } from "@/lib/payments/payments";
-import { sendEmail, orderConfirmationContent } from "@/lib/email/mailer";
+import {
+  sendEmail,
+  orderConfirmationContent,
+  ownerOrderNotificationContent,
+} from "@/lib/email/mailer";
 import { getSiteUrl } from "@/lib/site-url";
+import { OWNER_NOTIFICATION_EMAIL } from "@/lib/site-config";
 import { formatPrice } from "@/lib/format";
 
 const siteUrl = () => getSiteUrl();
@@ -177,6 +182,25 @@ export async function verifyPaymentAction(input: {
             orderNumber: detail.order.order_number,
             amount: formatPrice(detail.order.grand_total),
             orderUrl: `${siteUrl()}/orders/${orderId}`,
+          }),
+        });
+      }
+
+      // Also notify the store owner of the new (paid) order.
+      if (detail) {
+        const itemsSummary = detail.items
+          .map((i) => `${i.quantity}x ${i.title_snapshot}`)
+          .join(", ");
+        await sendEmail({
+          to: OWNER_NOTIFICATION_EMAIL,
+          ...ownerOrderNotificationContent({
+            orderNumber: detail.order.order_number,
+            amount: formatPrice(detail.order.grand_total),
+            paymentMethod: "razorpay",
+            customerName: snapshot.full_name,
+            customerEmail: to ?? null,
+            itemsSummary,
+            orderUrl: `${siteUrl()}/admin/orders/${orderId}`,
           }),
         });
       }

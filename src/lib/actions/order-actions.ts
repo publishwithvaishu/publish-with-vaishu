@@ -3,7 +3,11 @@
 import { z } from "zod";
 import { requireDbUser } from "@/lib/auth/session";
 import { getAddress } from "@/lib/auth/addresses";
-import { createOrder } from "@/lib/orders/orders";
+import { createOrder, getOrderForUser } from "@/lib/orders/orders";
+import { sendEmail, ownerOrderNotificationContent } from "@/lib/email/mailer";
+import { getSiteUrl } from "@/lib/site-url";
+import { OWNER_NOTIFICATION_EMAIL } from "@/lib/site-config";
+import { formatPrice } from "@/lib/format";
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -58,6 +62,31 @@ export async function createOrderAction(
       })),
       paymentMethod: "cod", // Online payment (Razorpay) arrives in Phase 3C.
     });
+
+    // Notify the store owner (best-effort — never blocks/fails the order).
+    try {
+      const detail = await getOrderForUser(user.id, orderId);
+      if (detail) {
+        const itemsSummary = detail.items
+          .map((i) => `${i.quantity}x ${i.title_snapshot}`)
+          .join(", ");
+        await sendEmail({
+          to: OWNER_NOTIFICATION_EMAIL,
+          ...ownerOrderNotificationContent({
+            orderNumber: detail.order.order_number,
+            amount: formatPrice(detail.order.grand_total),
+            paymentMethod: "cod",
+            customerName: snapshot.full_name,
+            customerEmail: user.email ?? snapshot.email,
+            itemsSummary,
+            orderUrl: `${getSiteUrl()}/admin/orders/${orderId}`,
+          }),
+        });
+      }
+    } catch (e) {
+      console.error("Owner order-notification email failed:", e);
+    }
+
     return { ok: true, orderId };
   } catch (e) {
     return {

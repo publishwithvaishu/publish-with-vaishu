@@ -5,13 +5,15 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/session";
 import { bookSchema, stockSchema } from "@/lib/admin/book-validation";
 import { fieldErrors } from "@/lib/auth/validation";
-import { uploadCover } from "@/lib/admin/storage";
+import { uploadCover, uploadCovers } from "@/lib/admin/storage";
 import {
   adminCreateBook,
   adminUpdateBook,
   adminDeleteBook,
   adminSetPublished,
   adminUpdateStock,
+  adminAddBookImages,
+  adminDeleteBookImage,
   type BookWrite,
 } from "@/lib/admin/books";
 import type { ActionState } from "@/lib/forms/types";
@@ -82,13 +84,24 @@ export async function createBookAction(
     };
   }
 
+  let bookId: string;
   try {
     const cover = await uploadCover(formData.get("cover") as File | null);
     const write = buildWrite(parsed.data);
     write.cover_image = cover; // null when no file uploaded
-    await adminCreateBook(write);
+    bookId = await adminCreateBook(write);
   } catch (e) {
     return { error: e instanceof Error ? e.message : "Could not create book." };
+  }
+
+  // Gallery images are best-effort — the book itself is already saved above,
+  // so a gallery upload hiccup shouldn't surface as a failed "create book".
+  try {
+    const galleryFiles = formData.getAll("gallery") as File[];
+    const galleryUrls = await uploadCovers(galleryFiles);
+    await adminAddBookImages(bookId, galleryUrls);
+  } catch (e) {
+    console.error("Gallery image upload failed:", e);
   }
 
   revalidatePath("/admin/books");
@@ -122,10 +135,32 @@ export async function updateBookAction(
     return { error: e instanceof Error ? e.message : "Could not update book." };
   }
 
+  // Gallery images are best-effort — same reasoning as createBookAction.
+  try {
+    const galleryFiles = formData.getAll("gallery") as File[];
+    const galleryUrls = await uploadCovers(galleryFiles);
+    await adminAddBookImages(id, galleryUrls);
+  } catch (e) {
+    console.error("Gallery image upload failed:", e);
+  }
+
   revalidatePath("/admin/books");
   revalidatePath("/books");
   revalidatePath(`/books/${id}`);
   redirect("/admin/books");
+}
+
+export async function deleteBookImageAction(formData: FormData): Promise<void> {
+  await requireAdmin();
+  const imageId = str(formData, "imageId");
+  const bookId = str(formData, "bookId");
+  if (imageId) {
+    await adminDeleteBookImage(imageId);
+    if (bookId) {
+      revalidatePath(`/admin/books/${bookId}/edit`);
+      revalidatePath(`/books/${bookId}`);
+    }
+  }
 }
 
 export async function deleteBookAction(formData: FormData): Promise<void> {

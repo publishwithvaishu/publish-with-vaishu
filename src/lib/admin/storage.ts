@@ -55,6 +55,20 @@ export function uploadCover(file: File | null): Promise<string | null> {
   return uploadImage(file, "Cover");
 }
 
+/**
+ * Upload additional book images (e.g. back cover) for the detail-page
+ * gallery. Skips empty file entries; returns only the successful URLs.
+ */
+export async function uploadCovers(files: File[]): Promise<string[]> {
+  const urls: string[] = [];
+  for (const file of files) {
+    if (!file || file.size === 0) continue;
+    const url = await uploadImage(file, "Additional image");
+    if (url) urls.push(url);
+  }
+  return urls;
+}
+
 /** Upload an author photo. Returns its public URL (null if no file). */
 export function uploadAuthorPhoto(file: File | null): Promise<string | null> {
   return uploadImage(file, "Photo");

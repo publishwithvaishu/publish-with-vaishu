@@ -9,7 +9,7 @@ import { Container } from "@/components/ui/Container";
 import { BookCard } from "@/components/ui/BookCard";
 import { BookCover } from "@/components/ui/BookCover";
 import { AddToCartButtons } from "@/components/book/AddToCartButtons";
-import { getBookById, getRelatedBooks } from "@/lib/queries";
+import { getBookById, getRelatedBooks, getBookImages } from "@/lib/queries";
 import { getSiteUrl } from "@/lib/site-url";
 import { pickAccent } from "@/lib/accents";
 import { formatPrice } from "@/lib/format";
@@ -70,8 +70,19 @@ export default async function BookDetailPage({
   const book = await getBookById(id);
   if (!book) notFound();
 
-  const related = await getRelatedBooks(book.category_id, book.id);
+  const [related, galleryImages] = await Promise.all([
+    getRelatedBooks(book.category_id, book.id),
+    getBookImages(book.id),
+  ]);
   const inStock = book.stock > 0;
+
+  // Primary cover + any additional gallery photos (e.g. back cover), real
+  // images only. A book with just the one existing cover renders exactly as
+  // before — the gallery only kicks in once there's more than one photo.
+  const galleryUrls = [
+    ...(isRealImage(book.cover_image) ? [book.cover_image] : []),
+    ...galleryImages.map((img) => img.url).filter(isRealImage),
+  ];
 
   // Structured data for the book (Google rich results for products/books).
   const canonicalUrl = `${getSiteUrl()}/books/${book.id}`;
@@ -131,17 +142,42 @@ export default async function BookDetailPage({
 
           {/* Hero: cover + key info */}
           <div className="mt-6 grid gap-8 sm:gap-12 md:grid-cols-[minmax(0,360px)_1fr]">
-            <div className="relative mx-auto aspect-[3/4] w-full max-w-[320px] overflow-hidden rounded-xl border border-hairline bg-bg-secondary md:mx-0">
-              <BookCover
-                title={book.title}
-                coverImage={book.cover_image}
-                label={book.category?.name ?? book.course}
-                author={book.author?.name}
-                variant="detail"
-                sizes="(max-width: 768px) 80vw, 360px"
-                priority
-              />
-            </div>
+            {galleryUrls.length > 1 ? (
+              <div className="mx-auto w-full max-w-[320px] md:mx-0">
+                <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto rounded-xl [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                  {galleryUrls.map((url, i) => (
+                    <div
+                      key={url}
+                      className="relative aspect-[3/4] w-full shrink-0 snap-start overflow-hidden rounded-xl border border-hairline bg-bg-secondary"
+                    >
+                      <Image
+                        src={url}
+                        alt={`${book.title} — image ${i + 1} of ${galleryUrls.length}`}
+                        fill
+                        sizes="(max-width: 768px) 80vw, 360px"
+                        priority={i === 0}
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-2 text-center text-xs text-muted">
+                  Swipe for more photos ({galleryUrls.length})
+                </p>
+              </div>
+            ) : (
+              <div className="relative mx-auto aspect-[3/4] w-full max-w-[320px] overflow-hidden rounded-xl border border-hairline bg-bg-secondary md:mx-0">
+                <BookCover
+                  title={book.title}
+                  coverImage={book.cover_image}
+                  label={book.category?.name ?? book.course}
+                  author={book.author?.name}
+                  variant="detail"
+                  sizes="(max-width: 768px) 80vw, 360px"
+                  priority
+                />
+              </div>
+            )}
 
             <div>
               {book.category && (

@@ -89,3 +89,31 @@ export function orderConfirmationContent(params: {
     text: `Thank you! Payment received and order ${params.orderNumber} confirmed (paid ${params.amount}).\nView it here: ${params.orderUrl}`,
   };
 }
+
+/** Notifies the store owner whenever a customer places an order (COD or Razorpay). */
+export function ownerOrderNotificationContent(params: {
+  orderNumber: string;
+  amount: string; // already-formatted, e.g. "₹369"
+  paymentMethod: string; // "cod" | "razorpay"
+  customerName: string;
+  customerEmail: string | null;
+  itemsSummary: string; // e.g. "2x Corporate Accounting, 1x Business Statistics"
+  orderUrl: string;
+}) {
+  const methodLabel = params.paymentMethod === "razorpay" ? "Paid online (Razorpay)" : "Cash on delivery";
+  return {
+    subject: `New order ${params.orderNumber} — Publish With Vaishu`,
+    html: wrap(
+      "New order placed",
+      `<strong>${params.orderNumber}</strong> — ${params.amount} (${methodLabel})<br>` +
+        `Customer: ${params.customerName}${params.customerEmail ? ` (${params.customerEmail})` : ""}<br>` +
+        `Items: ${params.itemsSummary}`,
+      { label: "View order in admin", url: params.orderUrl },
+    ),
+    text:
+      `New order ${params.orderNumber} — ${params.amount} (${methodLabel})\n` +
+      `Customer: ${params.customerName}${params.customerEmail ? ` (${params.customerEmail})` : ""}\n` +
+      `Items: ${params.itemsSummary}\n` +
+      `View: ${params.orderUrl}`,
+  };
+}

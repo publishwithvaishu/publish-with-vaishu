@@ -223,6 +223,26 @@ export async function getBookById(id: string): Promise<BookDetail | null> {
   return (data as unknown as BookDetail) ?? null;
 }
 
+/** Additional gallery images for a book's detail page (front cover is `books.cover_image`). */
+export async function getBookImages(
+  bookId: string,
+): Promise<{ id: string; url: string }[]> {
+  const supabase = getSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("book_images")
+    .select("id, url")
+    .eq("book_id", bookId)
+    .order("position", { ascending: true });
+  // Degrade to "no extra images" (single-cover page, today's behavior)
+  // rather than crash the book page — covers the window before migration
+  // 0008 has been run.
+  if (error) {
+    console.error("getBookImages failed:", error.message);
+    return [];
+  }
+  return (data ?? []) as { id: string; url: string }[];
+}
+
 /** Books from the same category (excluding the current book). */
 export async function getRelatedBooks(
   categoryId: string | null,

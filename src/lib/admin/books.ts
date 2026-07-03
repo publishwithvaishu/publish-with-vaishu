@@ -188,3 +188,61 @@ export async function adminListAuthors(): Promise<
   if (error) throw new Error(error.message);
   return (data ?? []) as { id: string; name: string }[];
 }
+
+// ---------------------------------------------------------------------------
+//  Book image gallery (additional photos — e.g. back cover)
+// ---------------------------------------------------------------------------
+
+export interface BookImage {
+  id: string;
+  url: string;
+}
+
+export async function adminGetBookImages(bookId: string): Promise<BookImage[]> {
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("book_images")
+    .select("id, url")
+    .eq("book_id", bookId)
+    .order("position", { ascending: true });
+  // Degrade to "no extra images" rather than crash the whole edit page —
+  // covers the window before migration 0008 has been run.
+  if (error) {
+    console.error("adminGetBookImages failed:", error.message);
+    return [];
+  }
+  return (data ?? []) as BookImage[];
+}
+
+/** Append images to a book's gallery, positioned after any existing ones. */
+export async function adminAddBookImages(
+  bookId: string,
+  urls: string[],
+): Promise<void> {
+  if (urls.length === 0) return;
+  const supabase = getSupabaseAdminClient();
+
+  const { data: existing, error: countError } = await supabase
+    .from("book_images")
+    .select("position")
+    .eq("book_id", bookId)
+    .order("position", { ascending: false })
+    .limit(1);
+  if (countError) throw new Error(countError.message);
+
+  const startPosition = ((existing?.[0]?.position as number) ?? -1) + 1;
+  const rows = urls.map((url, i) => ({
+    book_id: bookId,
+    url,
+    position: startPosition + i,
+  }));
+
+  const { error } = await supabase.from("book_images").insert(rows);
+  if (error) throw new Error(error.message);
+}
+
+export async function adminDeleteBookImage(imageId: string): Promise<void> {
+  const supabase = getSupabaseAdminClient();
+  const { error } = await supabase.from("book_images").delete().eq("id", imageId);
+  if (error) throw new Error(error.message);
+}

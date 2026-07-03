@@ -93,3 +93,27 @@ body {
 @utility card-hover {
   box-shadow: var(--shadow-card-hover);
 }
+
+/* Subtle "soft-UI" 3D pill — raised at rest, lifts on hover, presses on
+   click. Shadow depth stays small (no heavy shadows / bevels per the design
+   language), just enough to read as a physical raised button. */
+@utility nav-3d {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 2px 4px rgba(15, 23, 42, 0.08),
+    0 1px 2px rgba(15, 23, 42, 0.06);
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+.nav-3d:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 4px 8px rgba(15, 23, 42, 0.12),
+    0 2px 4px rgba(15, 23, 42, 0.08);
+}
+.nav-3d:active {
+  transform: translateY(0.5px);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
