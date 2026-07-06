@@ -159,7 +159,7 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${sourceSerif.variable} ${playfair.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-bg text-ink">
+      <body className="theme-warm min-h-full bg-canvas text-ink">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

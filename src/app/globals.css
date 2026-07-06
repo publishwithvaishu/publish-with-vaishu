@@ -134,11 +134,13 @@ body {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Warm "premium publishing house" theme — SCOPED to the home page.   */
-/*  Only overrides CSS variables, so every other page (books, cart,    */
-/*  account, admin, checkout) keeps its current look & functionality   */
-/*  untouched. Cream / ivory / beige surfaces, warm near-black ink and  */
-/*  buttons, Playfair Display headings.                                 */
+/*  Warm "premium publishing house" theme — applied sitewide (body, in   */
+/*  layout.tsx) so every customer-facing page (home, books, cart,        */
+/*  checkout, account, orders...) shares one consistent look. Only        */
+/*  overrides CSS variables. The admin dashboard opts back out via        */
+/*  .theme-admin below, since it's an internal tool, not customer-facing. */
+/*  Cream / ivory / beige surfaces, warm near-black ink and buttons,      */
+/*  Playfair Display headings.                                            */
 /* ------------------------------------------------------------------ */
 .theme-warm {
   --color-bg: #fdfbf6; /* ivory — cards, navbar, inputs */
@@ -151,6 +153,25 @@ body {
   --color-primary-hover: #000000;
   /* Headings switch to Playfair Display; body stays Inter. */
   --font-serif: var(--font-playfair), ui-serif, Georgia, Cambria,
+    "Times New Roman", serif;
+
+  background: var(--color-canvas);
+  color: var(--color-ink);
+}
+
+/* Admin dashboard opts back out of the warm theme above (it's an internal
+   tool, not a customer-facing page) by re-declaring the original light
+   SaaS token values for its own subtree. */
+.theme-admin {
+  --color-bg: #ffffff;
+  --color-bg-secondary: #f8fafc;
+  --color-canvas: #f9fafb;
+  --color-ink: #111827;
+  --color-muted: #6b7280;
+  --color-hairline: #e5e7eb;
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --font-serif: var(--font-source-serif), ui-serif, Georgia, Cambria,
     "Times New Roman", serif;
 
   background: var(--color-canvas);
