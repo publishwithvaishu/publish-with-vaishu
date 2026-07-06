@@ -1,22 +1,17 @@
 import { Container } from "@/components/ui/Container";
 import { formatCount } from "@/lib/format";
-import { getTrustStats } from "@/lib/queries";
 
 /**
  * Section 4 — Trust statistics: Books · Authors · Courses.
- * Live counts from the Supabase catalog (no hardcoded or placeholder
- * figures). Any stat with a zero count is hidden until real data exists.
+ * Figures are fixed at the owner's request (not read from the live
+ * Supabase catalog counts).
  */
 export async function TrustStats() {
-  const stats = await getTrustStats();
-
   const items = [
-    { value: stats.booksPublished, label: "Books published", Icon: BookIcon },
-    { value: stats.authors, label: "Authors", Icon: PeopleIcon },
-    { value: stats.courses, label: "Courses covered", Icon: CapIcon },
-  ].filter((item) => item.value > 0);
-
-  if (items.length === 0) return null;
+    { value: 35, label: "Books published", Icon: BookIcon },
+    { value: 30, label: "Authors", Icon: PeopleIcon },
+    { value: 8, label: "Courses covered", Icon: CapIcon },
+  ];
 
   return (
     <section className="pb-4">
