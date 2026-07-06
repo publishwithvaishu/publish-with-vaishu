@@ -12,20 +12,27 @@ export async function FeaturedBooks() {
   if (books.length === 0) return null;
 
   return (
-    <section className="py-10 sm:py-12">
+    <section className="py-14 sm:py-20">
       <Container>
-        <h2 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-          Featured books
-        </h2>
-        <p className="mt-2 text-muted">Hand-picked titles from our latest catalogue.</p>
+        <div className="flex items-end justify-between gap-6 border-b border-hairline pb-6">
+          <div>
+            <span className="eyebrow">The collection</span>
+            <h2 className="mt-3 font-serif text-3xl font-medium tracking-tight text-ink sm:text-4xl">
+              Featured books
+            </h2>
+          </div>
+          <span className="hidden max-w-xs text-right text-sm text-muted sm:block">
+            Hand-picked titles from our latest catalogue.
+          </span>
+        </div>
 
-        <div className="mt-8 grid grid-cols-2 gap-x-5 gap-y-9 sm:grid-cols-4">
+        <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4">
           {books.map((book) => (
             <BookCard key={book.id} book={book} />
           ))}
         </div>
 
-        <div className="mt-10 flex justify-center">
+        <div className="mt-12 flex justify-center">
           <Button href="/books" variant="outline" size="lg">
             View all books
           </Button>

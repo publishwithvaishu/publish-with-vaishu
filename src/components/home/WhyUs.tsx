@@ -1,5 +1,4 @@
 import { Container } from "@/components/ui/Container";
-import { accentAt } from "@/lib/accents";
 
 /**
  * Section 9 — Why students choose us: three short trust points.
@@ -22,32 +21,33 @@ const points = [
 
 export function WhyUs() {
   return (
-    <section className="py-14 sm:py-20">
+    <section className="border-y border-hairline bg-bg-secondary py-16 sm:py-24">
       <Container>
-        <h2 className="max-w-2xl text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-          Why students choose us
-        </h2>
+        <div className="text-center">
+          <span className="eyebrow">Why students choose us</span>
+          <h2 className="mx-auto mt-3 max-w-2xl font-serif text-3xl font-medium tracking-tight text-ink sm:text-4xl">
+            A publisher, not a marketplace
+          </h2>
+        </div>
 
-        <div className="mt-10 grid gap-10 sm:mt-14 sm:grid-cols-3 sm:gap-12">
-          {points.map((point, i) => {
-            const accent = accentAt(i);
-            return (
-              <div key={point.title}>
-                <span
-                  aria-hidden
-                  className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold ${accent.chipBg} ${accent.text}`}
-                >
-                  {i + 1}
-                </span>
-                <h3 className="mt-4 font-serif text-xl leading-snug text-ink">
-                  {point.title}
-                </h3>
-                <p className="mt-3 text-[15px] leading-relaxed text-muted">
-                  {point.body}
-                </p>
-              </div>
-            );
-          })}
+        <div className="mt-12 grid gap-x-12 gap-y-12 sm:mt-16 sm:grid-cols-3">
+          {points.map((point, i) => (
+            <div key={point.title} className="text-center sm:text-left">
+              <span
+                aria-hidden
+                className="font-serif text-3xl font-medium text-ink/30"
+              >
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span className="mx-auto mt-4 block h-px w-8 bg-ink/25 sm:mx-0" aria-hidden />
+              <h3 className="mt-5 font-serif text-xl font-medium leading-snug text-ink">
+                {point.title}
+              </h3>
+              <p className="mt-3 text-[15px] leading-relaxed text-muted">
+                {point.body}
+              </p>
+            </div>
+          ))}
         </div>
       </Container>
     </section>

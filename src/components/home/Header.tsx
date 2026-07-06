@@ -24,7 +24,7 @@ export function Header() {
             <Link
               href="/cart"
               aria-label="Your cart"
-              className="relative flex items-center justify-center rounded-full text-muted tap-target hover:bg-indigo-50 hover:text-indigo-600 md:hidden"
+              className="relative flex items-center justify-center rounded-full text-muted tap-target hover:bg-bg-secondary hover:text-ink md:hidden"
             >
               <CartIcon />
               <CartCountBadge />
@@ -32,7 +32,7 @@ export function Header() {
             <Link
               href="/account"
               aria-label="Your account"
-              className="flex items-center justify-center rounded-full text-muted tap-target hover:bg-indigo-50 hover:text-indigo-600"
+              className="flex items-center justify-center rounded-full text-muted tap-target hover:bg-bg-secondary hover:text-ink"
             >
               <AccountIcon />
             </Link>

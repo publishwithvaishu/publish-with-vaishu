@@ -6,83 +6,65 @@ import { SearchBar } from "@/components/home/SearchBar";
 import { CategoryChips } from "@/components/home/CategoryChips";
 import { PrescribedTitles } from "@/components/home/PrescribedTitles";
 import { FeaturedBooks } from "@/components/home/FeaturedBooks";
-import { WhyUs } from "@/components/home/WhyUs";
+import { AboutPublisher } from "@/components/home/AboutPublisher";
 import { CoursePanels } from "@/components/home/CoursePanels";
+import { WhyUs } from "@/components/home/WhyUs";
+import { GallerySection } from "@/components/home/GallerySection";
 import { AuthorsRow } from "@/components/home/AuthorsRow";
 import { Testimonials } from "@/components/home/Testimonials";
 import { FAQ } from "@/components/home/FAQ";
 import { Footer } from "@/components/home/Footer";
 import { MobileNav } from "@/components/MobileNav";
-import { SectionDivider } from "@/components/ui/SectionDivider";
+import { Reveal } from "@/components/ui/Reveal";
 
 // Homepage reads live data per request from Supabase.
 export const dynamic = "force-dynamic";
 
 export default function HomePage() {
+  // `theme-warm` scopes the premium cream/ivory/black publishing theme to the
+  // home page only — every other page keeps its existing look untouched.
   return (
-    <>
-      {/* 1 — Header */}
+    <div className="theme-warm min-h-screen bg-canvas">
       <Header />
 
       <main className="pb-24 md:pb-0">
-        {/* 2 — Hero */}
         <Hero />
-        {/* 3 — Explore Books CTA */}
         <ExploreCTA />
-        {/* 4 — Trust statistics */}
         <TrustStats />
-
-        <SectionDivider />
-
-        {/* 5 — Search bar */}
         <SearchBar />
-
-        <SectionDivider />
-
-        {/* 6 — Browse by course */}
         <CategoryChips />
 
-        <SectionDivider />
-
-        {/* 7 — University of Madras prescribed titles */}
-        <PrescribedTitles />
-
-        <SectionDivider />
-
-        {/* 8 — Featured books */}
-        <FeaturedBooks />
-
-        <SectionDivider />
-
-        {/* 9 — Browse by programme (panels with live title counts) */}
-        <CoursePanels />
-
-        <SectionDivider />
-
-        {/* 10 — Why students choose us */}
-        <WhyUs />
-
-        <SectionDivider />
-
-        {/* 11 — Our authors (live counts) */}
-        <AuthorsRow />
-
-        <SectionDivider />
-
-        {/* 12 — What students say (placeholder quotes — see TODO) */}
-        <Testimonials />
-
-        <SectionDivider />
-
-        {/* 13 — FAQ */}
-        <FAQ />
+        <Reveal>
+          <PrescribedTitles />
+        </Reveal>
+        <Reveal>
+          <FeaturedBooks />
+        </Reveal>
+        <Reveal>
+          <AboutPublisher />
+        </Reveal>
+        <Reveal>
+          <CoursePanels />
+        </Reveal>
+        <Reveal>
+          <WhyUs />
+        </Reveal>
+        <Reveal>
+          <GallerySection />
+        </Reveal>
+        <Reveal>
+          <AuthorsRow />
+        </Reveal>
+        <Reveal>
+          <Testimonials />
+        </Reveal>
+        <Reveal>
+          <FAQ />
+        </Reveal>
       </main>
 
-      {/* 10 — Footer */}
       <Footer />
-
-      {/* Mobile bottom navigation */}
       <MobileNav />
-    </>
+    </div>
   );
 }

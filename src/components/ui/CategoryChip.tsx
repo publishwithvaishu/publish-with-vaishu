@@ -17,7 +17,7 @@ export function CategoryChip({
 }) {
   const className = accent
     ? `inline-flex items-center rounded-full border px-4 py-2.5 text-sm font-medium transition-all duration-200 hover:brightness-[0.98] ${accent.bg} ${accent.border} ${accent.text} tap-target`
-    : "inline-flex items-center rounded-full border border-hairline bg-bg px-4 py-2.5 text-sm font-medium text-ink transition-all duration-200 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 tap-target";
+    : "inline-flex items-center rounded-full border border-hairline bg-bg px-5 py-2.5 text-sm font-medium tracking-wide text-ink transition-all duration-200 hover:border-ink hover:bg-ink hover:text-white tap-target";
 
   return (
     <Link href={href} className={className}>

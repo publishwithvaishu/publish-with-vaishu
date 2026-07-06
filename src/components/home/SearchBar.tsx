@@ -6,13 +6,13 @@ import { Container } from "@/components/ui/Container";
  */
 export function SearchBar() {
   return (
-    <section className="py-8 sm:py-10">
+    <section className="py-4">
       <Container>
         <form action="/books" method="get" role="search" className="mx-auto max-w-xl">
           <label htmlFor="site-search" className="sr-only">
             Search books
           </label>
-          <div className="flex items-center gap-2 rounded-full border border-hairline bg-bg px-4 py-1.5 focus-within:border-ink">
+          <div className="flex items-center gap-2 rounded-full border border-hairline bg-bg px-5 py-2 shadow-[0_1px_2px_rgba(33,27,18,0.05)] focus-within:border-ink">
             <SearchIcon />
             <input
               id="site-search"
@@ -24,7 +24,7 @@ export function SearchBar() {
             />
             <button
               type="submit"
-              className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-white tap-target"
+              className="rounded-full bg-primary px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover tap-target"
             >
               Search
             </button>

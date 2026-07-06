@@ -20,22 +20,27 @@ export async function AuthorsRow() {
   return (
     <section className="py-14 sm:py-20">
       <Container>
-        <h2 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-          Our authors
-        </h2>
-        <p className="mt-2 max-w-xl text-muted">
-          Faculty from University of Madras affiliated colleges — writing the
-          papers they teach.
-        </p>
+        <div className="text-center">
+          <span className="eyebrow">The faculty</span>
+          <h2 className="mt-3 font-serif text-3xl font-medium tracking-tight text-ink sm:text-4xl">
+            Our authors
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-muted">
+            Faculty from University of Madras affiliated colleges — writing the
+            papers they teach.
+          </p>
+        </div>
 
-        <ul className="mt-8 grid gap-x-10 gap-y-5 sm:mt-10 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="mx-auto mt-12 grid max-w-4xl gap-x-14 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
           {authors.map(([name, n]) => (
             <li
               key={name}
               className="flex items-baseline justify-between gap-4 border-b border-hairline pb-4"
             >
-              <span className="font-serif text-lg text-ink">{name}</span>
-              <span className="shrink-0 text-sm text-muted">
+              <span className="font-serif text-lg font-medium text-ink">
+                {name}
+              </span>
+              <span className="shrink-0 text-[11px] uppercase tracking-[0.12em] text-muted">
                 {n} {n === 1 ? "title" : "titles"}
               </span>
             </li>

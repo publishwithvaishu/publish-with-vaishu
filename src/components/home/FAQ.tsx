@@ -49,32 +49,30 @@ export function FAQ() {
     <section className="py-14 sm:py-20">
       <Container>
         <div className="mx-auto max-w-3xl">
-          <h2 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-            Frequently asked questions
-          </h2>
+          <div className="text-center">
+            <span className="eyebrow">Questions</span>
+            <h2 className="mt-3 font-serif text-3xl font-medium tracking-tight text-ink sm:text-4xl">
+              Frequently asked questions
+            </h2>
+          </div>
 
-          <div className="mt-8 border-t border-hairline sm:mt-10">
+          <div className="mt-12 border-t border-hairline">
             {faqs.map((f, i) => {
               const isOpen = open === i;
               return (
-                <div
-                  key={f.q}
-                  className={`border-b border-hairline transition-colors duration-200 ${
-                    isOpen ? "-mx-4 rounded-xl border-b-transparent bg-indigo-50/50 px-4" : ""
-                  }`}
-                >
+                <div key={f.q} className="border-b border-hairline">
                   <button
                     type="button"
                     onClick={() => setOpen(isOpen ? null : i)}
                     aria-expanded={isOpen}
                     className="flex w-full items-center justify-between gap-6 py-5 text-left tap-target"
                   >
-                    <span className="text-base font-medium text-ink">{f.q}</span>
+                    <span className="font-serif text-lg font-medium text-ink">
+                      {f.q}
+                    </span>
                     <span
                       aria-hidden
-                      className={`shrink-0 text-2xl font-light leading-none ${
-                        isOpen ? "text-primary" : "text-muted"
-                      }`}
+                      className="shrink-0 text-2xl font-light leading-none text-ink"
                     >
                       {isOpen ? "−" : "+"}
                     </span>

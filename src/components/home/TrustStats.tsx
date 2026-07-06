@@ -19,17 +19,17 @@ export async function TrustStats() {
   if (items.length === 0) return null;
 
   return (
-    <section className="py-4">
+    <section className="pb-4">
       <Container>
-        <dl className="mx-auto grid max-w-2xl grid-cols-3 gap-4 rounded-2xl border border-indigo-100 bg-indigo-50/60 px-4 py-8">
+        <dl className="mx-auto grid max-w-3xl grid-cols-3 divide-x divide-hairline border-y border-hairline">
           {items.map((item) => (
-            <div key={item.label} className="text-center">
+            <div key={item.label} className="px-4 py-8 text-center">
               <dt className="sr-only">{item.label}</dt>
               <dd>
-                <span className="block text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+                <span className="block font-serif text-4xl font-medium tracking-tight text-ink sm:text-5xl">
                   {formatCount(item.value)}
                 </span>
-                <span className="mt-1 block text-xs text-muted sm:text-sm">
+                <span className="mt-2 block text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">
                   {item.label}
                 </span>
               </dd>

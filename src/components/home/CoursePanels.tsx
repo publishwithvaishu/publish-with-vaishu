@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { getCategories, getBooks } from "@/lib/queries";
-import { pickAccent } from "@/lib/accents";
 
 /**
  * Browse by programme — large clickable panels per category with live title
@@ -26,41 +25,36 @@ export async function CoursePanels() {
   return (
     <section className="py-14 sm:py-20">
       <Container>
-        <h2 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-          Browse by programme
-        </h2>
-        <p className="mt-2 text-muted">
-          Every title, mapped to your degree and semester.
-        </p>
+        <div className="text-center">
+          <span className="eyebrow">Programmes</span>
+          <h2 className="mt-3 font-serif text-3xl font-medium tracking-tight text-ink sm:text-4xl">
+            Browse by programme
+          </h2>
+          <p className="mt-3 text-muted">
+            Every title, mapped to your degree and semester.
+          </p>
+        </div>
 
-        <div className="mt-8 grid gap-4 sm:mt-10 sm:grid-cols-2 lg:grid-cols-3">
-          {panels.map((c) => {
-            const accent = pickAccent(c.name);
-            return (
-              <Link
-                key={c.id}
-                href={`/books?category=${encodeURIComponent(c.slug)}`}
-                className={`group flex min-h-[150px] flex-col justify-between rounded-2xl border p-6 card-soft transition-all duration-200 hover:card-hover ${accent.bg} ${accent.border}`}
-              >
-                <span
-                  className={`text-xs font-semibold uppercase tracking-wide ${accent.text}`}
-                >
-                  Programme
-                </span>
-                <div>
-                  <h3 className="font-serif text-2xl text-ink transition-colors duration-200 group-hover:text-indigo-700">
-                    {c.name}
-                  </h3>
-                  <p className="mt-1.5 text-sm text-muted">
-                    {c.total} {c.total === 1 ? "title" : "titles"} ·{" "}
-                    <span className={`font-medium ${accent.text}`}>
-                      View books →
-                    </span>
-                  </p>
-                </div>
-              </Link>
-            );
-          })}
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {panels.map((c) => (
+            <Link
+              key={c.id}
+              href={`/books?category=${encodeURIComponent(c.slug)}`}
+              className="group flex min-h-[168px] flex-col justify-between rounded-sm border border-hairline bg-bg p-7 transition-all duration-300 hover:bg-ink"
+            >
+              <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted transition-colors duration-300 group-hover:text-white/60">
+                Programme
+              </span>
+              <div>
+                <h3 className="font-serif text-2xl font-medium text-ink transition-colors duration-300 group-hover:text-white">
+                  {c.name}
+                </h3>
+                <p className="mt-1.5 text-sm text-muted transition-colors duration-300 group-hover:text-white/70">
+                  {c.total} {c.total === 1 ? "title" : "titles"} · View books →
+                </p>
+              </div>
+            </Link>
+          ))}
         </div>
       </Container>
     </section>

@@ -36,9 +36,10 @@ export function Footer() {
       <Container>
         <div className="grid gap-10 py-12 sm:grid-cols-2 sm:py-16 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
           <div>
-            <span className="font-serif text-lg font-semibold tracking-tight text-ink">
+            <span className="eyebrow">Est. Chennai</span>
+            <p className="mt-2 font-serif text-2xl font-medium tracking-tight text-ink">
               Publish With Vaishu
-            </span>
+            </p>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
               An academic publishing house for University of Madras syllabus
               titles and research publications.

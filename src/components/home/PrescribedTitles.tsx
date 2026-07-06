@@ -14,10 +14,13 @@ export async function PrescribedTitles() {
     <section className="py-10 sm:py-12">
       <Container>
         <div className="flex items-end justify-between gap-4">
-          <h2 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-            University of Madras
-            <span className="block text-muted">prescribed titles</span>
-          </h2>
+          <div>
+            <span className="eyebrow">Prescribed by the university</span>
+            <h2 className="mt-3 font-serif text-3xl font-medium tracking-tight text-ink sm:text-4xl">
+              University of Madras
+              <span className="block italic text-muted">prescribed titles</span>
+            </h2>
+          </div>
         </div>
       </Container>
 

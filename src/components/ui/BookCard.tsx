@@ -13,7 +13,7 @@ export function BookCard({ book }: { book: BookWithRelations }) {
 
   return (
     <Link href={`/books/${book.id}`} className="group block">
-      <div className="relative aspect-[3/4] overflow-hidden rounded-xl border border-hairline bg-bg-secondary card-soft transition-all duration-300 group-hover:-translate-y-1 group-hover:border-indigo-200 group-hover:card-hover">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-sm border border-hairline bg-bg-secondary transition-all duration-300 group-hover:-translate-y-1 group-hover:border-ink/40 group-hover:shadow-[0_14px_30px_-16px_rgba(33,27,18,0.35)]">
         <BookCover
           title={book.title}
           coverImage={book.cover_image}
@@ -28,8 +28,8 @@ export function BookCard({ book }: { book: BookWithRelations }) {
         )}
       </div>
 
-      <div className="mt-3 space-y-0.5">
-        <h3 className="font-serif text-[15px] leading-snug text-ink transition-colors group-hover:text-indigo-700">
+      <div className="mt-3.5 space-y-0.5">
+        <h3 className="font-serif text-[15px] font-medium leading-snug text-ink transition-colors group-hover:text-ink/70">
           {book.title}
         </h3>
         {book.author?.name && (

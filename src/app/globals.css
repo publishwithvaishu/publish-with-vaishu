@@ -117,3 +117,76 @@ body {
   transform: translateY(0.5px);
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
 }
+
+/* ------------------------------------------------------------------ */
+/*  Warm "premium publishing house" theme — SCOPED to the home page.   */
+/*  Only overrides CSS variables, so every other page (books, cart,    */
+/*  account, admin, checkout) keeps its current look & functionality   */
+/*  untouched. Cream / ivory / beige surfaces, warm near-black ink and  */
+/*  buttons, Playfair Display headings.                                 */
+/* ------------------------------------------------------------------ */
+.theme-warm {
+  --color-bg: #fdfbf6; /* ivory — cards, navbar, inputs */
+  --color-bg-secondary: #efe7d6; /* warm beige — subtle fills */
+  --color-canvas: #f6f0e5; /* cream — page background */
+  --color-ink: #211b12; /* warm near-black — text */
+  --color-muted: #6f6555; /* warm taupe — secondary text */
+  --color-hairline: #e3d9c5; /* warm hairline — borders */
+  --color-primary: #211b12; /* warm black — buttons / active */
+  --color-primary-hover: #000000;
+  /* Headings switch to Playfair Display; body stays Inter. */
+  --font-serif: var(--font-playfair), ui-serif, Georgia, Cambria,
+    "Times New Roman", serif;
+
+  background: var(--color-canvas);
+  color: var(--color-ink);
+}
+
+/* Small tracked-out editorial label ("kicker"). */
+@utility eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* Thin decorative rule used under kickers / between title + author. */
+@utility rule-hair {
+  height: 1px;
+  background: color-mix(in srgb, var(--color-ink) 22%, transparent);
+}
+
+/* Editorial image slow-zoom on hover (paired with overflow-hidden parent). */
+@utility img-zoom {
+  transition: transform 1200ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.group:hover .img-zoom {
+  transform: scale(1.05);
+}
+
+/* Scroll-reveal (used by the <Reveal> wrapper). Honours reduced motion. */
+@keyframes reveal-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.reveal {
+  opacity: 0;
+}
+.reveal.is-visible {
+  animation: reveal-fade-up 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal.is-visible {
+    opacity: 1;
+    animation: none;
+  }
+}

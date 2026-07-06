@@ -30,7 +30,7 @@ export function HeaderNav() {
               "rounded-full border px-4 py-2 text-sm font-medium tap-target",
               active
                 ? "border-primary bg-primary text-white"
-                : "nav-3d border-hairline bg-bg text-ink hover:text-indigo-600",
+                : "nav-3d border-hairline bg-bg text-ink hover:text-ink/60",
             )}
           >
             {label}
@@ -43,7 +43,7 @@ export function HeaderNav() {
           "relative flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium tap-target",
           pathname?.startsWith("/cart")
             ? "border-primary bg-primary text-white"
-            : "nav-3d border-hairline bg-bg text-ink hover:text-indigo-600",
+            : "nav-3d border-hairline bg-bg text-ink hover:text-ink/60",
         )}
       >
         <CartIcon />
