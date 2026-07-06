@@ -2,14 +2,15 @@ import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 
 /**
- * Section 2 — Hero. Full-bleed editorial photograph with a warm scrim and a
- * large Playfair headline — the look of a premium publishing house cover.
- * Content is unchanged; treatment only.
+ * Section 2 — Hero. Full-viewport editorial photograph with a warm scrim and
+ * a large Playfair headline that floats up into place on page load — the
+ * look of a premium publishing house cover. Content is unchanged; treatment
+ * only.
  */
 export function Hero() {
   return (
     <section className="relative">
-      <div className="group relative h-[78vh] min-h-[520px] w-full overflow-hidden">
+      <div className="group relative h-screen min-h-[640px] w-full overflow-hidden">
         <Image
           src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=2000&q=80"
           alt="Publish With Vaishu — shelves of academic books and University of Madras syllabus titles"
@@ -27,16 +28,33 @@ export function Hero() {
         <div className="absolute inset-0 flex items-end pb-16 sm:items-center sm:pb-0">
           <Container>
             <div className="max-w-2xl">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#e9dcc2]">
+              <span
+                className="hero-float block text-[11px] font-semibold uppercase tracking-[0.28em] text-[#e9dcc2]"
+                style={{ animationDelay: "0ms" }}
+              >
                 Publish With Vaishu · Chennai
               </span>
-              <span className="mt-5 block h-px w-14 bg-[#e9dcc2]/50" aria-hidden />
+              <span
+                className="hero-float mt-5 block h-px w-14 bg-[#e9dcc2]/50"
+                style={{ animationDelay: "150ms" }}
+                aria-hidden
+              />
 
               <h1 className="mt-6 font-serif text-5xl font-medium leading-[1.02] tracking-[-0.01em] text-[#fbf6ec] sm:text-6xl lg:text-7xl">
-                Academic books,
-                <span className="block italic text-[#e4d4b6]">done right.</span>
+                <span className="hero-float block" style={{ animationDelay: "250ms" }}>
+                  Academic books,
+                </span>
+                <span
+                  className="hero-float block italic text-[#e4d4b6]"
+                  style={{ animationDelay: "400ms" }}
+                >
+                  done right.
+                </span>
               </h1>
-              <p className="mt-7 max-w-xl text-base leading-relaxed text-[#efe6d6]/90 sm:text-lg">
+              <p
+                className="hero-float mt-7 max-w-xl text-base leading-relaxed text-[#efe6d6]/90 sm:text-lg"
+                style={{ animationDelay: "600ms" }}
+              >
                 A publishing house for University of Madras syllabus titles —
                 printed with care, written by the faculty who teach them.
               </p>

@@ -16,6 +16,7 @@ import { FAQ } from "@/components/home/FAQ";
 import { Footer } from "@/components/home/Footer";
 import { MobileNav } from "@/components/MobileNav";
 import { Reveal } from "@/components/ui/Reveal";
+import { ScrollSnapOnHome } from "@/components/home/ScrollSnapOnHome";
 
 // Homepage reads live data per request from Supabase.
 export const dynamic = "force-dynamic";
@@ -25,6 +26,7 @@ export default function HomePage() {
   // home page only — every other page keeps its existing look untouched.
   return (
     <div className="theme-warm min-h-screen bg-canvas">
+      <ScrollSnapOnHome />
       <Header />
 
       <main className="pb-24 md:pb-0">

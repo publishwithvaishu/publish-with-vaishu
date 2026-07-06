@@ -25,6 +25,18 @@ const shots = [
     caption: "The museum hall",
     className: "aspect-square",
   },
+  {
+    src: "https://images.unsplash.com/photo-1531572753322-ad063cecc140?auto=format&fit=crop&w=900&q=80",
+    alt: "Ancient Roman ruins and columns",
+    caption: "Ancient ruins",
+    className: "aspect-square",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1541370976299-4d24ebbc9077?auto=format&fit=crop&w=900&q=80",
+    alt: "Classical marble statue in soft light",
+    caption: "Classical sculpture",
+    className: "aspect-square",
+  },
 ];
 
 export function GallerySection() {
