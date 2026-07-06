@@ -12,13 +12,14 @@ const first = (v: string | string[] | undefined) =>
   Array.isArray(v) ? v[0] : v;
 
 export default async function LoginPage({ searchParams }: { searchParams: SP }) {
-  const current = await getCurrentUser();
-  if (current) redirect(current.role === "admin" ? "/admin" : "/account");
-
   const sp = await searchParams;
   const rawCallback = first(sp.callbackUrl);
   const callbackUrl =
     rawCallback && rawCallback.startsWith("/") ? rawCallback : "/account";
+
+  const current = await getCurrentUser();
+  if (current)
+    redirect(current.role === "admin" ? "/admin" : callbackUrl);
 
   const notice = sp.registered
     ? "Account created. We've emailed a verification link — sign in to continue."

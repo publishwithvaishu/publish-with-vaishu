@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Header } from "@/components/home/Header";
 import { Footer } from "@/components/home/Footer";
 import { MobileNav } from "@/components/MobileNav";
@@ -8,9 +8,10 @@ import { Container } from "@/components/ui/Container";
 import { OrderStatusBadge } from "@/components/orders/OrderStatusBadge";
 import { OrderStatusStepper } from "@/components/orders/OrderStatusStepper";
 import { OrderTotals } from "@/components/orders/OrderTotals";
-import { requireUser } from "@/lib/auth/session";
+import { getCurrentUser } from "@/lib/auth/session";
 import { getOrderForUser } from "@/lib/orders/orders";
 import { formatPrice } from "@/lib/format";
+import { signOut } from "@/auth";
 
 export const metadata: Metadata = { title: "Order details" };
 export const dynamic = "force-dynamic";
@@ -30,9 +31,56 @@ export default async function OrderDetailPage({
   const { id } = await params;
   if (!UUID_RE.test(id)) notFound();
 
-  const user = await requireUser();
+  const user = await getCurrentUser();
+  if (!user) redirect(`/login?callbackUrl=/orders/${id}`);
+
   const data = await getOrderForUser(user.id, id);
-  if (!data) notFound();
+  if (!data) {
+    // Signed in, but this order isn't linked to the current account (e.g. a
+    // confirmation-email link opened while signed in as a different
+    // customer). A plain 404 here is misleading — guide them instead.
+    async function switchAccount() {
+      "use server";
+      await signOut({ redirectTo: `/login?callbackUrl=/orders/${id}` });
+    }
+
+    return (
+      <>
+        <Header />
+        <main className="pb-24 md:pb-0">
+          <Container className="py-16 text-center sm:py-24">
+            <h1 className="font-serif text-2xl text-ink sm:text-3xl">
+              We couldn&apos;t find this order on your account
+            </h1>
+            <p className="mx-auto mt-3 max-w-md text-sm text-muted">
+              You&apos;re signed in as{" "}
+              <span className="text-ink">{user.email}</span>. This order link
+              belongs to a different account — sign in with the email you used
+              at checkout, or check your order confirmation email again.
+            </p>
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+              <form action={switchAccount}>
+                <button
+                  type="submit"
+                  className="inline-flex h-11 items-center rounded-full bg-primary px-6 text-sm font-medium text-white"
+                >
+                  Sign in with a different account
+                </button>
+              </form>
+              <Link
+                href="/orders"
+                className="inline-flex h-11 items-center rounded-full border border-hairline px-6 text-sm font-medium text-ink hover:bg-bg-secondary"
+              >
+                Your orders
+              </Link>
+            </div>
+          </Container>
+        </main>
+        <Footer />
+        <MobileNav />
+      </>
+    );
+  }
 
   const { order, items, history } = data;
   const sp = await searchParams;
