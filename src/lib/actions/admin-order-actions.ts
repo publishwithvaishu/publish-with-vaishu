@@ -3,9 +3,13 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/session";
-import { adminUpdateOrderStatus } from "@/lib/admin/orders";
+import { adminUpdateOrderStatus, adminGetOrder } from "@/lib/admin/orders";
+import { sendEmail, orderStatusUpdateContent } from "@/lib/email/mailer";
+import { getSiteUrl } from "@/lib/site-url";
 import type { ActionState } from "@/lib/forms/types";
 import type { OrderStatus } from "@/lib/types";
+
+const EMAILED_STATUSES = new Set(["packed", "shipped", "delivered"]);
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -74,6 +78,30 @@ export async function updateOrderStatusAction(
       ok: false,
       error: e instanceof Error ? e.message : "Could not update order.",
     };
+  }
+
+  // Notify the customer of the status change (best-effort — never fails the
+  // status update itself if the email errors out).
+  if (EMAILED_STATUSES.has(d.status)) {
+    try {
+      const detail = await adminGetOrder(d.id);
+      const to = detail?.customer?.email;
+      if (detail && to) {
+        await sendEmail({
+          to,
+          ...orderStatusUpdateContent({
+            orderNumber: detail.order.order_number,
+            status: d.status as "packed" | "shipped" | "delivered",
+            orderUrl: `${getSiteUrl()}/orders/${d.id}`,
+            courierName: detail.order.courier_name,
+            trackingNumber: detail.order.tracking_number,
+            trackingUrl: detail.order.tracking_url,
+          }),
+        });
+      }
+    } catch (e) {
+      console.error("Order status-update email failed:", e);
+    }
   }
 
   revalidatePath(`/admin/orders/${d.id}`);

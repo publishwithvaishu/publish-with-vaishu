@@ -74,19 +74,110 @@ export function resetPasswordContent(url: string) {
   };
 }
 
-export function orderConfirmationContent(params: {
+/**
+ * All emails for one order share this exact subject line — that's what
+ * makes Gmail/Outlook/etc. thread the placed → packed → shipped →
+ * delivered emails together as one conversation, like replies.
+ */
+const orderThreadSubject = (orderNumber: string) =>
+  `Order ${orderNumber} — Publish With Vaishu`;
+
+/** Sent once, right after a customer places an order (COD or Razorpay). */
+export function orderPlacedContent(params: {
   orderNumber: string;
   amount: string; // already-formatted, e.g. "₹369"
+  paymentMethod: "cod" | "razorpay";
   orderUrl: string;
 }) {
+  const paymentNote =
+    params.paymentMethod === "razorpay"
+      ? `Your payment of <strong>${params.amount}</strong> was received.`
+      : `Total to pay on delivery: <strong>${params.amount}</strong>.`;
+  const paymentNoteText =
+    params.paymentMethod === "razorpay"
+      ? `Your payment of ${params.amount} was received.`
+      : `Total to pay on delivery: ${params.amount}.`;
+
   return {
-    subject: `Order ${params.orderNumber} confirmed — Publish With Vaishu`,
+    subject: orderThreadSubject(params.orderNumber),
     html: wrap(
-      "Thank you for your order!",
-      `Your payment was successful and order <strong>${params.orderNumber}</strong> is confirmed. Amount paid: <strong>${params.amount}</strong>. We'll email you again when it ships.`,
+      "Hi, your order has been placed!",
+      `Thank you for shopping with us. Order <strong>${params.orderNumber}</strong> has been placed successfully. ${paymentNote} We'll reply here with updates as it's packed, shipped, and delivered.`,
       { label: "View your order", url: params.orderUrl },
     ),
-    text: `Thank you! Payment received and order ${params.orderNumber} confirmed (paid ${params.amount}).\nView it here: ${params.orderUrl}`,
+    text: `Hi, your order ${params.orderNumber} has been placed! ${paymentNoteText}\nView it here: ${params.orderUrl}`,
+  };
+}
+
+const STATUS_COPY: Record<
+  "packed" | "shipped" | "delivered",
+  { heading: string; body: string }
+> = {
+  packed: {
+    heading: "Your order has been packed",
+    body: "Good news — your order has been packed and will be handed to the courier soon.",
+  },
+  shipped: {
+    heading: "Your order has shipped",
+    body: "Your order is on its way!",
+  },
+  delivered: {
+    heading: "Your order has been delivered",
+    body: "Your order has been delivered. We hope you enjoy your book — thank you for shopping with Publish With Vaishu!",
+  },
+};
+
+/**
+ * Sent as a same-subject follow-up whenever the admin marks an order
+ * packed / shipped / delivered — reads like a reply in the same thread as
+ * the original "order placed" email.
+ */
+export function orderStatusUpdateContent(params: {
+  orderNumber: string;
+  status: "packed" | "shipped" | "delivered";
+  orderUrl: string;
+  courierName?: string | null;
+  trackingNumber?: string | null;
+  trackingUrl?: string | null;
+}) {
+  const copy = STATUS_COPY[params.status];
+  const hasTrackingInfo =
+    params.status === "shipped" &&
+    (params.courierName || params.trackingNumber || params.trackingUrl);
+
+  const trackingHtml = hasTrackingInfo
+    ? "<br>" +
+      [
+        params.courierName ? `Courier: <strong>${params.courierName}</strong>` : "",
+        params.trackingNumber
+          ? `Tracking no.: <strong>${params.trackingNumber}</strong>`
+          : "",
+        params.trackingUrl
+          ? `<a href="${params.trackingUrl}">Track your shipment</a>`
+          : "",
+      ]
+        .filter(Boolean)
+        .join("<br>")
+    : "";
+  const trackingText = hasTrackingInfo
+    ? "\n" +
+      [
+        params.courierName ? `Courier: ${params.courierName}` : "",
+        params.trackingNumber ? `Tracking no.: ${params.trackingNumber}` : "",
+        params.trackingUrl ? `Track: ${params.trackingUrl}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n")
+    : "";
+
+  return {
+    subject: orderThreadSubject(params.orderNumber),
+    html: wrap(
+      copy.heading,
+      `Order <strong>${params.orderNumber}</strong> — ${copy.body}${trackingHtml}`,
+      { label: "View your order", url: params.orderUrl },
+    ),
+    text: `Order ${params.orderNumber} — ${copy.body}${trackingText}\nView it here: ${params.orderUrl}`,
   };
 }
 

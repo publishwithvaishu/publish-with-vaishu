@@ -22,7 +22,7 @@ import {
 } from "@/lib/payments/payments";
 import {
   sendEmail,
-  orderConfirmationContent,
+  orderPlacedContent,
   ownerOrderNotificationContent,
 } from "@/lib/email/mailer";
 import { getSiteUrl } from "@/lib/site-url";
@@ -178,9 +178,10 @@ export async function verifyPaymentAction(input: {
       if (detail && to) {
         await sendEmail({
           to,
-          ...orderConfirmationContent({
+          ...orderPlacedContent({
             orderNumber: detail.order.order_number,
             amount: formatPrice(detail.order.grand_total),
+            paymentMethod: "razorpay",
             orderUrl: `${siteUrl()}/orders/${orderId}`,
           }),
         });

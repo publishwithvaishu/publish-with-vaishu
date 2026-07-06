@@ -2,9 +2,12 @@ import { cn } from "@/lib/cn";
 import type { OrderStatus } from "@/lib/types";
 import type { OrderStatusHistoryEntry } from "@/lib/orders/types";
 
+// Customer-facing timeline: 4 steps instead of the 5 raw DB statuses.
+// "confirmed" and "processing" both display as "Order placed" (the first
+// dot) — the underlying OrderStatus values and history rows are unchanged,
+// this only affects display labels/grouping below.
 const STEPS: { key: OrderStatus; label: string }[] = [
-  { key: "confirmed", label: "Order confirmed" },
-  { key: "processing", label: "Processing" },
+  { key: "confirmed", label: "Order placed" },
   { key: "packed", label: "Packed" },
   { key: "shipped", label: "Shipped" },
   { key: "delivered", label: "Delivered" },
@@ -39,14 +42,22 @@ export function OrderStatusStepper({
     );
   }
 
-  const currentIndex = STEPS.findIndex((s) => s.key === status);
+  // "processing" has no dedicated step — it displays as the same first dot
+  // as "confirmed" ("Order placed").
+  const effectiveStatus = status === "processing" ? "confirmed" : status;
+  const currentIndex = STEPS.findIndex((s) => s.key === effectiveStatus);
 
   return (
     <ol className="relative">
       {STEPS.map((step, i) => {
         const done = i <= currentIndex;
         const active = i === currentIndex;
-        const date = dates.get(step.key);
+        // The "Order placed" step's date should show whichever of
+        // confirmed/processing was recorded first.
+        const date =
+          step.key === "confirmed"
+            ? (dates.get("confirmed") ?? dates.get("processing"))
+            : dates.get(step.key);
         const isLast = i === STEPS.length - 1;
 
         return (

@@ -86,9 +86,9 @@ export default async function OrderDetailPage({
   const sp = await searchParams;
   const justPlaced = sp.placed === "1";
   const addr = order.shipping_address;
-  const canTrack =
+  const hasShippingInfo =
     (order.status === "shipped" || order.status === "delivered") &&
-    !!order.tracking_url;
+    !!(order.courier_name || order.tracking_number || order.tracking_url);
 
   const placed = new Date(order.created_at).toLocaleString("en-IN", {
     day: "numeric",
@@ -153,12 +153,14 @@ export default async function OrderDetailPage({
                   Order tracking
                 </h2>
                 <OrderStatusStepper status={order.status} history={history} />
-                {canTrack && (
+                {hasShippingInfo && (
                   <div className="mt-5 border-t border-hairline pt-5 text-sm">
-                    <p className="text-muted">
-                      Courier:{" "}
-                      <span className="text-ink">{order.courier_name}</span>
-                    </p>
+                    {order.courier_name && (
+                      <p className="text-muted">
+                        Courier:{" "}
+                        <span className="text-ink">{order.courier_name}</span>
+                      </p>
+                    )}
                     {order.tracking_number && (
                       <p className="mt-1 text-muted">
                         Tracking no.:{" "}
@@ -167,14 +169,16 @@ export default async function OrderDetailPage({
                         </span>
                       </p>
                     )}
-                    <a
-                      href={order.tracking_url!}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-3 inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-medium text-white"
-                    >
-                      Track shipment →
-                    </a>
+                    {order.tracking_url && (
+                      <a
+                        href={order.tracking_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-3 inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-medium text-white"
+                      >
+                        Track shipment →
+                      </a>
+                    )}
                   </div>
                 )}
               </section>

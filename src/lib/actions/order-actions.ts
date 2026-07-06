@@ -4,7 +4,11 @@ import { z } from "zod";
 import { requireDbUser } from "@/lib/auth/session";
 import { getAddress } from "@/lib/auth/addresses";
 import { createOrder, getOrderForUser } from "@/lib/orders/orders";
-import { sendEmail, ownerOrderNotificationContent } from "@/lib/email/mailer";
+import {
+  sendEmail,
+  ownerOrderNotificationContent,
+  orderPlacedContent,
+} from "@/lib/email/mailer";
 import { getSiteUrl } from "@/lib/site-url";
 import { OWNER_NOTIFICATION_EMAIL } from "@/lib/site-config";
 import { formatPrice } from "@/lib/format";
@@ -63,10 +67,23 @@ export async function createOrderAction(
       paymentMethod: "cod", // Online payment (Razorpay) arrives in Phase 3C.
     });
 
-    // Notify the store owner (best-effort — never blocks/fails the order).
+    // Notify the customer + store owner (best-effort — never blocks/fails the order).
     try {
       const detail = await getOrderForUser(user.id, orderId);
       if (detail) {
+        const to = user.email ?? snapshot.email;
+        if (to) {
+          await sendEmail({
+            to,
+            ...orderPlacedContent({
+              orderNumber: detail.order.order_number,
+              amount: formatPrice(detail.order.grand_total),
+              paymentMethod: "cod",
+              orderUrl: `${getSiteUrl()}/orders/${orderId}`,
+            }),
+          });
+        }
+
         const itemsSummary = detail.items
           .map((i) => `${i.quantity}x ${i.title_snapshot}`)
           .join(", ");
@@ -84,7 +101,7 @@ export async function createOrderAction(
         });
       }
     } catch (e) {
-      console.error("Owner order-notification email failed:", e);
+      console.error("Order notification email failed:", e);
     }
 
     return { ok: true, orderId };
