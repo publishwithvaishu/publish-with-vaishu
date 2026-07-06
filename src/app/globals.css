@@ -208,41 +208,15 @@ body {
   }
 }
 
-/* Section-to-section scroll-snap — home page only. `home-scroll-snap` is
-   toggled on <html> by <ScrollSnapOnHome> only while the home page is
-   mounted, so no other route is affected. `proximity` (not `mandatory`) so
-   the page only gently settles at a section boundary when the scroll
-   gesture is already coming to rest nearby — never forces a jump through
-   long content, so it can't feel broken or fight the user's scroll.
-   scroll-margin-top keeps the settled section clear of the sticky header.
-
-   IMPORTANT: only the Hero and the big Reveal-wrapped feature sections get a
-   snap point — NOT the short filler sections right after the hero (CTA line,
-   stats, search bar, category chips). Those four are all under ~370px tall
-   and sit back-to-back, so giving every one of them a snap point packed
-   4 snap targets into less than one viewport height — that's what caused
-   the "stuck"/laggy feel: every small scroll nudge got caught by the next
-   tiny section. Skipping them lets that stretch scroll freely, then settle
-   nicely once a real section arrives. */
-html.home-scroll-snap {
-  scroll-snap-type: y proximity;
-  /* Native scroll-snap already animates the settle-into-place motion. Layering
-     the sitewide `scroll-behavior: smooth` (above) on top of that made the
-     browser run two competing smooth-scroll mechanisms on every scroll tick,
-     which is what caused the reported "stuck"/laggy feel — this turns the
-     CSS smooth-scroll off specifically while snapping is active. */
-  scroll-behavior: auto;
-}
-.theme-warm main > section:first-child,
-.theme-warm main > .reveal {
-  scroll-snap-align: start;
-  scroll-margin-top: 4rem;
-}
-@media (prefers-reduced-motion: reduce) {
-  html.home-scroll-snap {
-    scroll-snap-type: none;
-  }
-}
+/* NOTE: an earlier version of this file enabled native CSS scroll-snap
+   (scroll-snap-type: y proximity) between home-page sections. It was removed
+   — on real devices/trackpads (not synthetic testing) it caused a "stuck"
+   scroll feel and, worse, it snapped a section into place faster than the
+   .reveal fade-up below could be perceived, so the transition looked like it
+   wasn't happening at all. The .reveal animation alone is the section
+   transition now: it's pure opacity/transform, never intercepts or fights
+   the browser's native scroll physics, and works identically on every input
+   device. <ScrollSnapOnHome> was removed from the page for the same reason. */
 
 /* Hero headline / kicker / subtext float up into place on page load (not
    scroll-triggered — the hero is above the fold). Staggered via

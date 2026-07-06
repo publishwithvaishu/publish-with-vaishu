@@ -6,7 +6,7 @@ import { HeaderNav } from "@/components/home/HeaderNav";
 /** Section 1 — Header: logo wordmark + cart + account icon, hairline bottom border. */
 export function Header() {
   return (
-    <header className="sticky top-0 z-40 border-b border-hairline bg-bg/70 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur-xl supports-[backdrop-filter]:bg-bg/60">
+    <header className="sticky top-0 z-40 border-b border-hairline bg-bg/90 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur-sm supports-[backdrop-filter]:bg-bg/80">
       <Container>
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2">

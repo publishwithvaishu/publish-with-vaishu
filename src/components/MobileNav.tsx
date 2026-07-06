@@ -16,7 +16,7 @@ export function MobileNav() {
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-hairline bg-bg/80 shadow-[0_-1px_2px_rgba(15,23,42,0.04)] backdrop-blur-xl md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-hairline bg-bg/95 shadow-[0_-1px_2px_rgba(15,23,42,0.04)] backdrop-blur-sm md:hidden"
     >
       <ul className="mx-auto flex max-w-md items-stretch justify-around">
         {items.map(({ label, href, icon: Icon, badge }) => (
