@@ -1,4 +1,4 @@
-import { Header } from "@/components/home/Header";
+import { HomeHeader } from "@/components/home/HomeHeader";
 import { Hero } from "@/components/home/Hero";
 import { ExploreCTA } from "@/components/home/ExploreCTA";
 import { TrustStats } from "@/components/home/TrustStats";
@@ -25,7 +25,7 @@ export default function HomePage() {
   // home page only — every other page keeps its existing look untouched.
   return (
     <div className="theme-warm min-h-screen bg-canvas">
-      <Header />
+      <HomeHeader />
 
       <main className="pb-24 md:pb-0">
         <Hero />

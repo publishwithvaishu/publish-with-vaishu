@@ -40,7 +40,7 @@ export function Hero() {
                 aria-hidden
               />
 
-              <h1 className="mt-6 font-serif text-5xl font-medium leading-[1.02] tracking-[-0.01em] text-[#fbf6ec] sm:text-6xl lg:text-7xl">
+              <h1 className="mt-6 font-serif text-[70px] font-medium leading-[1.02] tracking-[-0.01em] text-[#fbf6ec] sm:text-[88px] lg:text-[106px]">
                 <span className="hero-float block" style={{ animationDelay: "250ms" }}>
                   Academic books,
                 </span>

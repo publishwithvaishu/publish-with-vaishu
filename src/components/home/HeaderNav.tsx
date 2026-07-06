@@ -16,7 +16,7 @@ const links = [
   { label: "Books", href: "/books", icon: BookIcon },
 ];
 
-export function HeaderNav() {
+export function HeaderNav({ light = false }: { light?: boolean }) {
   const pathname = usePathname();
 
   return (
@@ -28,10 +28,12 @@ export function HeaderNav() {
             key={href}
             href={href}
             className={cn(
-              "group flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium tap-target",
+              "group flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium tap-target transition-colors duration-300",
               active
                 ? "border-primary bg-primary text-white"
-                : "nav-3d border-hairline bg-bg text-ink hover:text-ink/60",
+                : light
+                  ? "border-white/30 bg-white/10 text-[#fbf6ec] backdrop-blur-sm hover:bg-white/20"
+                  : "nav-3d border-hairline bg-bg text-ink hover:text-ink/60",
             )}
           >
             <Icon className="nav-icon" />
@@ -42,10 +44,12 @@ export function HeaderNav() {
       <Link
         href="/cart"
         className={cn(
-          "group relative flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium tap-target",
+          "group relative flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium tap-target transition-colors duration-300",
           pathname?.startsWith("/cart")
             ? "border-primary bg-primary text-white"
-            : "nav-3d border-hairline bg-bg text-ink hover:text-ink/60",
+            : light
+              ? "border-white/30 bg-white/10 text-[#fbf6ec] backdrop-blur-sm hover:bg-white/20"
+              : "nav-3d border-hairline bg-bg text-ink hover:text-ink/60",
         )}
       >
         <CartIcon className="nav-icon" />
