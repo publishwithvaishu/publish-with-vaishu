@@ -1,20 +1,14 @@
+import Link from "next/link";
 import { Container } from "@/components/ui/Container";
-import { getBooks } from "@/lib/queries";
+import { getHomeAuthors } from "@/lib/queries";
 
 /**
- * Our authors — author names with live title counts, aggregated from the
- * existing catalog query (getBooks). No new data-fetching logic, plain
- * typography per the site's existing language.
+ * Our authors — a premium card grid of active authors (curated + ordered in
+ * the admin), each with a portrait, designation, college, short bio and a
+ * live book count. Falls back to nothing when no active authors exist.
  */
 export async function AuthorsRow() {
-  const { books } = await getBooks({ page: 1, pageSize: 100 });
-
-  const counts = new Map<string, number>();
-  for (const b of books) {
-    const name = b.author?.name;
-    if (name) counts.set(name, (counts.get(name) ?? 0) + 1);
-  }
-  const authors = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 9);
+  const authors = await getHomeAuthors();
   if (authors.length === 0) return null;
 
   return (
@@ -31,18 +25,55 @@ export async function AuthorsRow() {
           </p>
         </div>
 
-        <ul className="mx-auto mt-12 grid max-w-4xl gap-x-14 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
-          {authors.map(([name, n]) => (
+        <ul className="mx-auto mt-12 grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {authors.map((a) => (
             <li
-              key={name}
-              className="flex items-baseline justify-between gap-4 border-b border-hairline pb-4"
+              key={a.id}
+              className="flex flex-col rounded-2xl border border-hairline bg-bg p-6 text-center shadow-[0_1px_2px_rgba(33,27,18,0.04)]"
             >
-              <span className="font-serif text-lg font-medium text-ink">
-                {name}
-              </span>
-              <span className="shrink-0 text-[11px] uppercase tracking-[0.12em] text-muted">
-                {n} {n === 1 ? "title" : "titles"}
-              </span>
+              {a.photo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={a.photo}
+                  alt={a.name}
+                  className="mx-auto h-24 w-24 rounded-full object-cover"
+                />
+              ) : (
+                <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-bg-secondary font-serif text-2xl text-ink/40">
+                  {a.name.charAt(0)}
+                </div>
+              )}
+
+              <h3 className="mt-4 font-serif text-lg font-medium text-ink">
+                {a.name}
+              </h3>
+              {a.designation && (
+                <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
+                  {a.designation}
+                </p>
+              )}
+              {a.college && (
+                <p className="mt-1 text-sm text-muted">{a.college}</p>
+              )}
+              {a.bio && (
+                <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-muted">
+                  {a.bio}
+                </p>
+              )}
+
+              <div className="mt-4 flex flex-col items-center gap-3 border-t border-hairline pt-4">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">
+                  {a.book_count} {a.book_count === 1 ? "book" : "books"} published
+                </span>
+                {a.book_count > 0 && (
+                  <Link
+                    href={`/books?q=${encodeURIComponent(a.name)}`}
+                    className="text-sm font-medium text-ink underline decoration-hairline underline-offset-4 hover:decoration-ink"
+                  >
+                    View books
+                  </Link>
+                )}
+              </div>
             </li>
           ))}
         </ul>

@@ -18,6 +18,25 @@ export interface Author {
   designation: string | null;
   department: string | null;
   college: string | null;
+  display_order: number;
+  active: boolean;
+  created_at: string;
+}
+
+export interface Publisher {
+  id: string;
+  name: string;
+  designation: string | null;
+  bio: string | null;
+  photo: string | null;
+  email: string | null;
+  phone: string | null;
+  website: string | null;
+  linkedin: string | null;
+  twitter: string | null;
+  instagram: string | null;
+  display_order: number;
+  active: boolean;
   created_at: string;
 }
 

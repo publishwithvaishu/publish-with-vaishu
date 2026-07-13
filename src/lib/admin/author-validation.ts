@@ -17,6 +17,8 @@ export const authorSchema = z.object({
   department: txt(120),
   college: txt(160),
   bio: z.string().trim().max(4000).optional().or(z.literal("")),
+  display_order: z.coerce.number().int().min(0).max(9999).default(0),
+  active: z.coerce.boolean().default(true),
 });
 
 export type AuthorFormValues = z.infer<typeof authorSchema>;

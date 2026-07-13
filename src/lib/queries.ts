@@ -6,8 +6,19 @@ import type {
   CatalogParams,
   CatalogResult,
   Category,
+  Publisher,
   TrustStats,
 } from "@/lib/types";
+
+export interface HomeAuthor {
+  id: string;
+  name: string;
+  photo: string | null;
+  designation: string | null;
+  college: string | null;
+  bio: string | null;
+  book_count: number;
+}
 
 // Columns selected for a book card, joined with author name + category.
 const BOOK_CARD_SELECT =
@@ -242,6 +253,68 @@ export async function getBookImages(
     return (data ?? []) as { id: string; url: string }[];
   } catch (e) {
     console.error("getBookImages failed:", e);
+    return [];
+  }
+}
+
+/**
+ * The publisher shown in the homepage "Meet Our Publisher" section — the
+ * lowest display-order active publisher. Wrapped in try/catch so a missing
+ * `publishers` table (before migration 0009 runs) degrades to "no section"
+ * instead of crashing the homepage.
+ */
+export async function getHomePublisher(): Promise<Publisher | null> {
+  try {
+    const supabase = getSupabaseServerClient();
+    const { data, error } = await supabase
+      .from("publishers")
+      .select("*")
+      .eq("active", true)
+      .order("display_order", { ascending: true })
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    return (data as Publisher) ?? null;
+  } catch (e) {
+    console.error("getHomePublisher failed:", e);
+    return null;
+  }
+}
+
+/**
+ * Active authors for the upgraded homepage authors section, ordered by
+ * display order, each with a live book count. Wrapped in try/catch so a
+ * missing `active`/`display_order` column (before migration 0009 runs)
+ * degrades to "no authors" instead of crashing the homepage.
+ */
+export async function getHomeAuthors(limit = 12): Promise<HomeAuthor[]> {
+  try {
+    const supabase = getSupabaseServerClient();
+    const { data, error } = await supabase
+      .from("authors")
+      .select(
+        "id, name, photo, designation, college, bio, display_order, books ( count )",
+      )
+      .eq("active", true)
+      .order("display_order", { ascending: true })
+      .order("name", { ascending: true })
+      .limit(limit);
+    if (error) throw new Error(error.message);
+    return (data ?? []).map((a) => {
+      const books = a.books as { count: number }[] | undefined;
+      return {
+        id: a.id as string,
+        name: a.name as string,
+        photo: (a.photo as string) ?? null,
+        designation: (a.designation as string) ?? null,
+        college: (a.college as string) ?? null,
+        bio: (a.bio as string) ?? null,
+        book_count: books?.[0]?.count ?? 0,
+      };
+    });
+  } catch (e) {
+    console.error("getHomeAuthors failed:", e);
     return [];
   }
 }

@@ -14,6 +14,7 @@ import { cn } from "@/lib/cn";
 const links = [
   { label: "Home", href: "/", icon: HomeIcon },
   { label: "Books", href: "/books", icon: BookIcon },
+  { label: "Services", href: "/services", icon: ServicesIcon },
 ];
 
 export function HeaderNav({ light = false }: { light?: boolean }) {
@@ -96,6 +97,26 @@ function BookIcon({ className }: { className?: string }) {
     >
       <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5H6.5A2.5 2.5 0 0 0 4 21V5.5Z" />
       <path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20" />
+    </svg>
+  );
+}
+
+function ServicesIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+    >
+      <path d="M12 3 4 7v6c0 4 3.4 6.8 8 8 4.6-1.2 8-4 8-8V7l-8-4Z" />
+      <path d="m9 12 2 2 4-4" />
     </svg>
   );
 }

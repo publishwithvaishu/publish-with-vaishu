@@ -9,6 +9,8 @@ export interface AdminAuthorRow {
   email: string | null;
   designation: string | null;
   college: string | null;
+  active: boolean;
+  display_order: number;
   created_at: string;
   book_count: number;
 }
@@ -29,6 +31,8 @@ export interface AuthorWrite {
   department: string | null;
   college: string | null;
   bio: string | null;
+  display_order: number;
+  active: boolean;
   photo?: string | null;
 }
 
@@ -59,15 +63,19 @@ export async function getAuthorsPage(params: {
 
   let query = supabase
     .from("authors")
-    .select("id, name, email, designation, college, created_at, books ( count )", {
-      count: "exact",
-    });
+    .select(
+      "id, name, email, designation, college, active, display_order, created_at, books ( count )",
+      { count: "exact" },
+    );
 
   if (params.q && params.q.trim()) {
     query = query.ilike("name", `%${params.q.trim()}%`);
   }
 
-  query = query.order("name", { ascending: true }).range(from, to);
+  query = query
+    .order("display_order", { ascending: true })
+    .order("name", { ascending: true })
+    .range(from, to);
 
   const { data, error, count } = await query;
   if (error) throw new Error(error.message);
@@ -80,6 +88,8 @@ export async function getAuthorsPage(params: {
       email: (a.email as string) ?? null,
       designation: (a.designation as string) ?? null,
       college: (a.college as string) ?? null,
+      active: (a.active as boolean) ?? true,
+      display_order: (a.display_order as number) ?? 0,
       created_at: a.created_at as string,
       book_count: books?.[0]?.count ?? 0,
     };

@@ -73,3 +73,10 @@ export async function uploadCovers(files: File[]): Promise<string[]> {
 export function uploadAuthorPhoto(file: File | null): Promise<string | null> {
   return uploadImage(file, "Photo");
 }
+
+/** Upload a publisher photo. Returns its public URL (null if no file). */
+export function uploadPublisherPhoto(
+  file: File | null,
+): Promise<string | null> {
+  return uploadImage(file, "Photo");
+}

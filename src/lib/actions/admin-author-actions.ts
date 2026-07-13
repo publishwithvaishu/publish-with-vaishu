@@ -35,6 +35,9 @@ function extract(fd: FormData) {
     department: str(fd, "department"),
     college: str(fd, "college"),
     bio: str(fd, "bio"),
+    display_order: str(fd, "display_order"),
+    // Unchecked checkboxes are omitted from FormData → empty string → false.
+    active: str(fd, "active") === "on" || str(fd, "active") === "true",
   };
 }
 
@@ -47,6 +50,8 @@ function buildWrite(v: AuthorFormValues): AuthorWrite {
     department: toNull(v.department),
     college: toNull(v.college),
     bio: toNull(v.bio),
+    display_order: v.display_order,
+    active: v.active,
   };
 }
 
@@ -75,6 +80,7 @@ export async function createAuthorAction(
     return { error: e instanceof Error ? e.message : "Could not create author." };
   }
   revalidatePath("/admin/authors");
+  revalidatePath("/");
   redirect("/admin/authors");
 }
 
@@ -107,6 +113,7 @@ export async function updateAuthorAction(
   }
   revalidatePath("/admin/authors");
   revalidatePath(`/admin/authors/${id}`);
+  revalidatePath("/");
   redirect("/admin/authors");
 }
 
@@ -121,4 +128,5 @@ export async function deleteAuthorAction(formData: FormData): Promise<void> {
 
   await deleteAuthor(id);
   revalidatePath("/admin/authors");
+  revalidatePath("/");
 }

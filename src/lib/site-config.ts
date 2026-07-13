@@ -14,6 +14,10 @@ export const PHONE = "+91 98400 00000"; // TODO: replace with real number
 
 export const EMAIL = "publishwithvaishu@gmail.com";
 
+// Publisher's LinkedIn — used by the floating social button next to WhatsApp.
+export const LINKEDIN_URL =
+  "https://www.linkedin.com/in/ms-k-vaishnavi-m-sc-cs-m-sc-cfis-m-phil-cs-net-0aa0561b4";
+
 /** Store owner's inbox for order-placed notifications (see Part C). */
 export const OWNER_NOTIFICATION_EMAIL = "publishwithvaishu@gmail.com";
 

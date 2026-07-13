@@ -10,6 +10,8 @@ import { AboutPublisher } from "@/components/home/AboutPublisher";
 import { CoursePanels } from "@/components/home/CoursePanels";
 import { WhyUs } from "@/components/home/WhyUs";
 import { GallerySection } from "@/components/home/GallerySection";
+import { PublisherSection } from "@/components/home/PublisherSection";
+import { AuthorsRow } from "@/components/home/AuthorsRow";
 import { Testimonials } from "@/components/home/Testimonials";
 import { FAQ } from "@/components/home/FAQ";
 import { Footer } from "@/components/home/Footer";
@@ -84,6 +86,12 @@ export default function HomePage() {
         </Reveal>
         <Reveal>
           <GallerySection />
+        </Reveal>
+        <Reveal>
+          <PublisherSection />
+        </Reveal>
+        <Reveal>
+          <AuthorsRow />
         </Reveal>
         <Reveal>
           <Testimonials />

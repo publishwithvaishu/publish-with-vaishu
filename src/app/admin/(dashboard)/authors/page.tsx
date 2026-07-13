@@ -71,12 +71,19 @@ export default async function AdminAuthorsPage({
               className="flex items-center justify-between gap-4 rounded-2xl border border-hairline p-4"
             >
               <div className="min-w-0">
-                <Link
-                  href={`/admin/authors/${a.id}`}
-                  className="font-medium text-ink hover:underline"
-                >
-                  {a.name}
-                </Link>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/admin/authors/${a.id}`}
+                    className="font-medium text-ink hover:underline"
+                  >
+                    {a.name}
+                  </Link>
+                  {!a.active && (
+                    <span className="rounded-full bg-bg-secondary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted">
+                      Hidden
+                    </span>
+                  )}
+                </div>
                 <p className="mt-0.5 truncate text-sm text-muted">
                   {[a.designation, a.college].filter(Boolean).join(" · ") || "—"}
                 </p>

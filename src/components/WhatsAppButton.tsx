@@ -1,26 +1,52 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { whatsappLink } from "@/lib/site-config";
+import { whatsappLink, LINKEDIN_URL } from "@/lib/site-config";
 
 /**
- * Sitewide floating WhatsApp chat button — customer-facing pages only
- * (hidden on /admin). Sits above the mobile bottom nav on small screens.
+ * Sitewide floating social buttons — LinkedIn beside the WhatsApp chat
+ * button, customer-facing pages only (hidden on /admin). Sits above the
+ * mobile bottom nav on small screens.
  */
 export function WhatsAppButton() {
   const pathname = usePathname();
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <a
-      href={whatsappLink("Hi Publish With Vaishu, I have a question about a book.")}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="Chat with us on WhatsApp"
-      className="fixed bottom-20 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform duration-200 hover:scale-105 active:scale-95 md:bottom-6"
+    <div className="fixed bottom-20 right-5 z-50 flex items-center gap-3 md:bottom-6">
+      <a
+        href={LINKEDIN_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Publish With Vaishu on LinkedIn"
+        className="flex h-14 w-14 items-center justify-center rounded-full bg-[#0A66C2] text-white shadow-lg transition-transform duration-200 hover:scale-105 active:scale-95"
+      >
+        <LinkedInIcon />
+      </a>
+      <a
+        href={whatsappLink("Hi Publish With Vaishu, I have a question about a book.")}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat with us on WhatsApp"
+        className="flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform duration-200 hover:scale-105 active:scale-95"
+      >
+        <WhatsAppIcon />
+      </a>
+    </div>
+  );
+}
+
+function LinkedInIcon() {
+  return (
+    <svg
+      width="26"
+      height="26"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
     >
-      <WhatsAppIcon />
-    </a>
+      <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z" />
+    </svg>
   );
 }
 
