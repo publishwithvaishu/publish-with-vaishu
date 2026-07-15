@@ -33,9 +33,10 @@ export async function generateMetadata({
   const book = await getBookById(id);
   if (!book) return { title: "Book not found" };
 
+  const authorNames = book.authors.map((a) => a.name).join(", ");
   const description =
     book.description?.slice(0, 200) ??
-    `${book.title}${book.author?.name ? ` by ${book.author.name}` : ""} — available at Publish With Vaishu.`;
+    `${book.title}${authorNames ? ` by ${authorNames}` : ""} — available at Publish With Vaishu.`;
   const images = isRealImage(book.cover_image)
     ? [{ url: book.cover_image }]
     : undefined;
@@ -75,6 +76,7 @@ export default async function BookDetailPage({
     getBookImages(book.id),
   ]);
   const inStock = book.stock > 0;
+  const authorNamesJoined = book.authors.map((a) => a.name).join(", ");
 
   // Primary cover + any additional gallery photos (e.g. back cover), real
   // images only. A book with just the one existing cover renders exactly as
@@ -91,9 +93,16 @@ export default async function BookDetailPage({
     "@type": "Book",
     name: book.title,
     ...(book.subtitle ? { alternateName: book.subtitle } : {}),
-    ...(book.author?.name
-      ? { author: { "@type": "Person", name: book.author.name } }
-      : {}),
+    ...(book.authors.length === 1
+      ? { author: { "@type": "Person", name: book.authors[0].name } }
+      : book.authors.length > 1
+        ? {
+            author: book.authors.map((a) => ({
+              "@type": "Person",
+              name: a.name,
+            })),
+          }
+        : {}),
     ...(book.isbn ? { isbn: book.isbn } : {}),
     ...(book.language ? { inLanguage: book.language } : {}),
     ...(book.pages ? { numberOfPages: book.pages } : {}),
@@ -171,7 +180,7 @@ export default async function BookDetailPage({
                   title={book.title}
                   coverImage={book.cover_image}
                   label={book.category?.name ?? book.course}
-                  author={book.author?.name}
+                  author={authorNamesJoined || undefined}
                   variant="detail"
                   sizes="(max-width: 768px) 80vw, 360px"
                   priority
@@ -199,9 +208,9 @@ export default async function BookDetailPage({
                 <p className="mt-2 text-lg text-muted">{book.subtitle}</p>
               )}
 
-              {book.author?.name && (
+              {authorNamesJoined && (
                 <p className="mt-4 text-base text-ink">
-                  by <span className="font-medium">{book.author.name}</span>
+                  by <span className="font-medium">{authorNamesJoined}</span>
                 </p>
               )}
 
@@ -221,7 +230,7 @@ export default async function BookDetailPage({
                     title: book.title,
                     price: book.price,
                     cover_image: book.cover_image,
-                    author_name: book.author?.name ?? null,
+                    author_name: authorNamesJoined || null,
                     stock: book.stock,
                     delivery_charge: book.delivery_charge,
                   }}
@@ -256,40 +265,40 @@ export default async function BookDetailPage({
             </section>
           )}
 
-          {/* About Author */}
-          {book.author && (
+          {/* Written by — one block per author (a book can have 1..N). */}
+          {book.authors.length > 0 && (
             <section className="mt-16 border-t border-hairline pt-10">
               <h2 className="text-2xl font-semibold tracking-tight text-ink">
-                About the author
+                {book.authors.length === 1 ? "About the author" : "Written by"}
               </h2>
-              <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:gap-7">
-                <AuthorAvatar
-                  name={book.author.name}
-                  photo={book.author.photo}
-                />
-                <div className="max-w-2xl">
-                  <p className="font-serif text-xl text-ink">
-                    {book.author.name}
-                  </p>
-                  {(book.author.designation ||
-                    book.author.department ||
-                    book.author.college) && (
-                    <p className="mt-1 text-sm text-muted">
-                      {[
-                        book.author.designation,
-                        book.author.department,
-                        book.author.college,
-                      ]
-                        .filter(Boolean)
-                        .join(" · ")}
-                    </p>
-                  )}
-                  {book.author.bio && (
-                    <p className="mt-3 text-[15px] leading-relaxed text-muted">
-                      {book.author.bio}
-                    </p>
-                  )}
-                </div>
+              <div className="mt-6 space-y-10">
+                {book.authors.map((author) => (
+                  <div
+                    key={author.id}
+                    className="flex flex-col gap-5 sm:flex-row sm:gap-7"
+                  >
+                    <AuthorAvatar name={author.name} photo={author.photo} />
+                    <div className="max-w-2xl">
+                      <p className="font-serif text-xl text-ink">
+                        {author.name}
+                      </p>
+                      {(author.designation ||
+                        author.department ||
+                        author.college) && (
+                        <p className="mt-1 text-sm text-muted">
+                          {[author.designation, author.department, author.college]
+                            .filter(Boolean)
+                            .join(" · ")}
+                        </p>
+                      )}
+                      {author.bio && (
+                        <p className="mt-3 text-[15px] leading-relaxed text-muted">
+                          {author.bio}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             </section>
           )}

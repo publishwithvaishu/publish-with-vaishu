@@ -31,6 +31,8 @@ export interface AuthorWrite {
   department: string | null;
   college: string | null;
   bio: string | null;
+  website: string | null;
+  linkedin: string | null;
   display_order: number;
   active: boolean;
   photo?: string | null;
@@ -64,7 +66,7 @@ export async function getAuthorsPage(params: {
   let query = supabase
     .from("authors")
     .select(
-      "id, name, email, designation, college, active, display_order, created_at, books ( count )",
+      "id, name, email, designation, college, active, display_order, created_at, book_authors ( count )",
       { count: "exact" },
     );
 
@@ -81,7 +83,7 @@ export async function getAuthorsPage(params: {
   if (error) throw new Error(error.message);
 
   const rows: AdminAuthorRow[] = (data ?? []).map((a) => {
-    const books = a.books as { count: number }[] | undefined;
+    const bookAuthors = a.book_authors as { count: number }[] | undefined;
     return {
       id: a.id as string,
       name: a.name as string,
@@ -91,7 +93,7 @@ export async function getAuthorsPage(params: {
       active: (a.active as boolean) ?? true,
       display_order: (a.display_order as number) ?? 0,
       created_at: a.created_at as string,
-      book_count: books?.[0]?.count ?? 0,
+      book_count: bookAuthors?.[0]?.count ?? 0,
     };
   });
 
@@ -122,22 +124,45 @@ export async function getAuthorBooks(
   authorId: string,
 ): Promise<AuthorBook[]> {
   const supabase = getSupabaseAdminClient();
+  const { data: links, error: linksError } = await supabase
+    .from("book_authors")
+    .select("book_id")
+    .eq("author_id", authorId);
+  if (linksError) throw new Error(linksError.message);
+
+  const bookIds = (links ?? []).map((l) => l.book_id as string);
+  if (bookIds.length === 0) return [];
+
   const { data, error } = await supabase
     .from("books")
     .select(
       "id, title, subtitle, price, stock, cover_image, language, course, university, is_featured, published, " +
-        "author:authors ( id, name ), category:categories ( id, name, slug )",
+        "authors:book_authors ( position, author:authors ( id, name ) ), category:categories ( id, name, slug )",
     )
-    .eq("author_id", authorId)
+    .in("id", bookIds)
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
-  return (data ?? []) as unknown as AuthorBook[];
+
+  return (data ?? []).map((row) => {
+    const r = row as unknown as Record<string, unknown>;
+    const rawAuthors =
+      (r.authors as
+        | { position: number; author: { id: string; name: string } | null }[]
+        | undefined) ?? [];
+    return {
+      ...(r as unknown as AuthorBook),
+      authors: rawAuthors
+        .filter((a): a is typeof a & { author: { id: string; name: string } } => !!a.author)
+        .sort((a, b) => a.position - b.position)
+        .map((a) => a.author),
+    };
+  });
 }
 
 export async function getAuthorBookCount(id: string): Promise<number> {
   const supabase = getSupabaseAdminClient();
   const { count, error } = await supabase
-    .from("books")
+    .from("book_authors")
     .select("*", { count: "exact", head: true })
     .eq("author_id", id);
   if (error) throw new Error(error.message);

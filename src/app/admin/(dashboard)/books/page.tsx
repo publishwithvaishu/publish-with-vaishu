@@ -129,7 +129,9 @@ export default async function AdminBooksPage({
                     )}
                   </div>
                   <p className="mt-1 text-sm text-muted">
-                    {book.author?.name ?? "—"}
+                    {book.authors.length > 0
+                      ? book.authors.map((a) => a.name).join(", ")
+                      : "—"}
                     {book.category ? ` · ${book.category.name}` : ""} ·{" "}
                     {formatPrice(book.price)}
                   </p>

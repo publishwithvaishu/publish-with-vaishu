@@ -72,6 +72,23 @@ export function AdminAuthorForm({
         error={f.college}
       />
 
+      <div className="grid gap-5 sm:grid-cols-2">
+        <FormField
+          label="Website"
+          name="website"
+          defaultValue={author?.website ?? ""}
+          error={f.website}
+          placeholder="https://…"
+        />
+        <FormField
+          label="LinkedIn"
+          name="linkedin"
+          defaultValue={author?.linkedin ?? ""}
+          error={f.linkedin}
+          placeholder="https://…"
+        />
+      </div>
+
       <div>
         <label htmlFor="field-bio" className="block text-sm font-medium text-ink">
           Bio

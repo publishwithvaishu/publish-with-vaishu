@@ -37,7 +37,8 @@ export const bookSchema = z.object({
     z.number().int().min(0).max(1_000_000),
   ),
   description: z.string().trim().max(8000).optional().or(z.literal("")),
-  author_id: uuidOrEmpty,
+  // A book can have any number of authors (including zero).
+  author_ids: z.array(z.string().regex(UUID_RE, "Invalid author selection")).default([]),
   category_id: uuidOrEmpty,
   is_featured: z.boolean().optional().default(false),
   published: z.boolean().optional().default(true),

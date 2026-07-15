@@ -1,6 +1,7 @@
 import "server-only";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import type {
+  Author,
   BookDetail,
   BookWithRelations,
   CatalogParams,
@@ -20,14 +21,47 @@ export interface HomeAuthor {
   book_count: number;
 }
 
-// Columns selected for a book card, joined with author name + category.
+// Columns selected for a book card: joined through the book_authors junction
+// (a book can have 1..N authors) + category. Each row is ordered by the
+// junction's `position` so authors display in the order they were added.
 const BOOK_CARD_SELECT =
   "id, title, subtitle, price, stock, cover_image, language, course, university, is_featured, delivery_charge, " +
-  "author:authors ( id, name ), category:categories ( id, name, slug )";
+  "authors:book_authors ( position, author:authors ( id, name ) ), " +
+  "category:categories ( id, name, slug )";
 
-// Full set of columns + full author record for the detail page.
+// Full set of columns + full author records (via book_authors) for the detail page.
 const BOOK_DETAIL_SELECT =
-  "*, author:authors (*), category:categories ( id, name, slug )";
+  "*, authors:book_authors ( position, author:authors (*) ), category:categories ( id, name, slug )";
+
+type RawJoinedAuthor<T> = { position: number; author: T | null };
+
+/** Flattens the `book_authors` join into an ordered, non-null author array. */
+function flattenAuthors<T>(raw: RawJoinedAuthor<T>[] | null | undefined): T[] {
+  return (raw ?? [])
+    .filter((r): r is RawJoinedAuthor<T> & { author: T } => !!r.author)
+    .sort((a, b) => a.position - b.position)
+    .map((r) => r.author);
+}
+
+/** Maps a raw book-card row (see BOOK_CARD_SELECT) into BookWithRelations. */
+function mapCardRow(row: unknown): BookWithRelations {
+  const r = row as Record<string, unknown>;
+  return {
+    ...(r as unknown as BookWithRelations),
+    authors: flattenAuthors(
+      r.authors as RawJoinedAuthor<Pick<Author, "id" | "name">>[],
+    ),
+  };
+}
+
+/** Maps a raw book-detail row (see BOOK_DETAIL_SELECT) into BookDetail. */
+function mapDetailRow(row: unknown): BookDetail {
+  const r = row as Record<string, unknown>;
+  return {
+    ...(r as unknown as BookDetail),
+    authors: flattenAuthors(r.authors as RawJoinedAuthor<Author>[]),
+  };
+}
 
 const DEFAULT_PAGE_SIZE = 12;
 
@@ -55,7 +89,7 @@ export async function getFeaturedBooks(limit = 8): Promise<BookWithRelations[]> 
     .limit(limit);
 
   if (error) throw new Error(`Failed to load featured books: ${error.message}`);
-  return (data ?? []) as unknown as BookWithRelations[];
+  return (data ?? []).map(mapCardRow);
 }
 
 /** University of Madras prescribed titles row. */
@@ -73,7 +107,7 @@ export async function getPrescribedTitles(
 
   if (error)
     throw new Error(`Failed to load prescribed titles: ${error.message}`);
-  return (data ?? []) as unknown as BookWithRelations[];
+  return (data ?? []).map(mapCardRow);
 }
 
 /**
@@ -122,14 +156,25 @@ async function resolveCategoryId(slugParam: string): Promise<string | null> {
   return match?.id ?? null;
 }
 
-/** Author ids whose name matches the search term (for title/author/ISBN search). */
-async function findAuthorIdsByName(term: string): Promise<string[]> {
+/**
+ * Book ids linked (via book_authors) to any author whose name matches the
+ * search term — for title/author/ISBN search across the many-to-many
+ * relationship.
+ */
+async function findBookIdsByAuthorName(term: string): Promise<string[]> {
   const supabase = getSupabaseServerClient();
-  const { data } = await supabase
+  const { data: authorRows } = await supabase
     .from("authors")
     .select("id")
     .ilike("name", `%${term}%`);
-  return (data ?? []).map((a) => a.id as string);
+  const authorIds = (authorRows ?? []).map((a) => a.id as string);
+  if (authorIds.length === 0) return [];
+
+  const { data: linkRows } = await supabase
+    .from("book_authors")
+    .select("book_id")
+    .in("author_id", authorIds);
+  return [...new Set((linkRows ?? []).map((r) => r.book_id as string))];
 }
 
 /**
@@ -166,8 +211,8 @@ export async function getBooks(params: CatalogParams): Promise<CatalogResult> {
     if (term) {
       const like = `%${term}%`;
       const ors = [`title.ilike.${like}`, `isbn.ilike.${like}`];
-      const authorIds = await findAuthorIdsByName(term);
-      if (authorIds.length) ors.push(`author_id.in.(${authorIds.join(",")})`);
+      const bookIds = await findBookIdsByAuthorName(term);
+      if (bookIds.length) ors.push(`id.in.(${bookIds.join(",")})`);
       query = query.or(ors.join(","));
     }
   }
@@ -197,7 +242,7 @@ export async function getBooks(params: CatalogParams): Promise<CatalogResult> {
 
   const total = count ?? 0;
   return {
-    books: (data ?? []) as unknown as BookWithRelations[],
+    books: (data ?? []).map(mapCardRow),
     total,
     page,
     pageSize,
@@ -231,7 +276,7 @@ export async function getBookById(id: string): Promise<BookDetail | null> {
     .maybeSingle();
 
   if (error) throw new Error(`Failed to load book: ${error.message}`);
-  return (data as unknown as BookDetail) ?? null;
+  return data ? mapDetailRow(data) : null;
 }
 
 /** Additional gallery images for a book's detail page (front cover is `books.cover_image`). */
@@ -294,7 +339,7 @@ export async function getHomeAuthors(limit = 12): Promise<HomeAuthor[]> {
     const { data, error } = await supabase
       .from("authors")
       .select(
-        "id, name, photo, designation, college, bio, display_order, books ( count )",
+        "id, name, photo, designation, college, bio, display_order, book_authors ( count )",
       )
       .eq("active", true)
       .order("display_order", { ascending: true })
@@ -302,7 +347,7 @@ export async function getHomeAuthors(limit = 12): Promise<HomeAuthor[]> {
       .limit(limit);
     if (error) throw new Error(error.message);
     return (data ?? []).map((a) => {
-      const books = a.books as { count: number }[] | undefined;
+      const bookAuthors = a.book_authors as { count: number }[] | undefined;
       return {
         id: a.id as string,
         name: a.name as string,
@@ -310,7 +355,7 @@ export async function getHomeAuthors(limit = 12): Promise<HomeAuthor[]> {
         designation: (a.designation as string) ?? null,
         college: (a.college as string) ?? null,
         bio: (a.bio as string) ?? null,
-        book_count: books?.[0]?.count ?? 0,
+        book_count: bookAuthors?.[0]?.count ?? 0,
       };
     });
   } catch (e) {
@@ -337,5 +382,5 @@ export async function getRelatedBooks(
     .limit(limit);
 
   if (error) throw new Error(`Failed to load related books: ${error.message}`);
-  return (data ?? []) as unknown as BookWithRelations[];
+  return (data ?? []).map(mapCardRow);
 }

@@ -6,11 +6,12 @@ const ADMIN_BOOK_SELECT =
   "id, title, subtitle, isbn, edition, university, course, semester, language, " +
   "pages, publication_date, price, stock, cover_image, description, is_featured, " +
   "published, author_id, category_id, created_at, delivery_charge, " +
-  "author:authors ( id, name ), category:categories ( id, name, slug )";
+  "authors:book_authors ( position, author:authors ( id, name ) ), " +
+  "category:categories ( id, name, slug )";
 
 export interface AdminBook extends Book {
   published: boolean;
-  author: { id: string; name: string } | null;
+  authors: { id: string; name: string }[];
   category: { id: string; name: string; slug: string } | null;
 }
 
@@ -28,13 +29,29 @@ export interface BookWrite {
   price: number;
   stock: number;
   description: string | null;
-  author_id: string | null;
+  /** Every selected author, in display order. Can be empty (no authors). */
+  authorIds: string[];
   category_id: string | null;
   is_featured: boolean;
   published: boolean;
   cover_image?: string | null;
   /** Manual per-book delivery charge. null = use the site default rule. */
   delivery_charge: number | null;
+}
+
+function mapAdminBookRow(row: unknown): AdminBook {
+  const r = row as Record<string, unknown>;
+  const rawAuthors =
+    (r.authors as
+      | { position: number; author: { id: string; name: string } | null }[]
+      | undefined) ?? [];
+  return {
+    ...(r as unknown as AdminBook),
+    authors: rawAuthors
+      .filter((a): a is typeof a & { author: { id: string; name: string } } => !!a.author)
+      .sort((a, b) => a.position - b.position)
+      .map((a) => a.author),
+  };
 }
 
 const DEFAULT_PAGE_SIZE = 8;
@@ -56,13 +73,21 @@ async function resolveCategoryId(slug: string): Promise<string | null> {
   return (data ?? []).find((c) => normalizeSlug(c.slug) === target)?.id ?? null;
 }
 
-async function authorIdsByName(term: string): Promise<string[]> {
+/** Book ids linked (via book_authors) to any author whose name matches. */
+async function bookIdsByAuthorName(term: string): Promise<string[]> {
   const supabase = getSupabaseAdminClient();
-  const { data } = await supabase
+  const { data: authorRows } = await supabase
     .from("authors")
     .select("id")
     .ilike("name", `%${term}%`);
-  return (data ?? []).map((a) => a.id as string);
+  const authorIds = (authorRows ?? []).map((a) => a.id as string);
+  if (authorIds.length === 0) return [];
+
+  const { data: linkRows } = await supabase
+    .from("book_authors")
+    .select("book_id")
+    .in("author_id", authorIds);
+  return [...new Set((linkRows ?? []).map((r) => r.book_id as string))];
 }
 
 /** All books (published + unpublished) for the admin list. */
@@ -95,8 +120,8 @@ export async function adminListBooks(params: {
     if (term) {
       const like = `%${term}%`;
       const ors = [`title.ilike.${like}`, `isbn.ilike.${like}`];
-      const ids = await authorIdsByName(term);
-      if (ids.length) ors.push(`author_id.in.(${ids.join(",")})`);
+      const bookIds = await bookIdsByAuthorName(term);
+      if (bookIds.length) ors.push(`id.in.(${bookIds.join(",")})`);
       query = query.or(ors.join(","));
     }
   }
@@ -108,7 +133,7 @@ export async function adminListBooks(params: {
 
   const total = count ?? 0;
   return {
-    books: (data ?? []) as unknown as AdminBook[],
+    books: (data ?? []).map(mapAdminBookRow),
     total,
     page,
     pageSize,
@@ -124,18 +149,53 @@ export async function adminGetBook(id: string): Promise<AdminBook | null> {
     .eq("id", id)
     .maybeSingle();
   if (error) throw new Error(error.message);
-  return (data as unknown as AdminBook) ?? null;
+  return data ? mapAdminBookRow(data) : null;
+}
+
+/** Replaces a book's book_authors rows to exactly match `authorIds`, in order. */
+async function setBookAuthors(bookId: string, authorIds: string[]): Promise<void> {
+  const supabase = getSupabaseAdminClient();
+  const { error: delError } = await supabase
+    .from("book_authors")
+    .delete()
+    .eq("book_id", bookId);
+  if (delError) throw new Error(delError.message);
+
+  if (authorIds.length === 0) return;
+  const rows = authorIds.map((author_id, position) => ({
+    book_id: bookId,
+    author_id,
+    position,
+  }));
+  const { error: insError } = await supabase.from("book_authors").insert(rows);
+  if (insError) throw new Error(insError.message);
+}
+
+/** Splits BookWrite into the plain `books` row patch + the authorIds list. */
+function splitWrite(write: BookWrite) {
+  const { authorIds, ...bookFields } = write;
+  return {
+    bookFields,
+    authorIds,
+    // Kept on `books.author_id` for backward compatibility with any code
+    // that still reads it directly (e.g. legacy reports) — the join table
+    // is the source of truth for display everywhere else now.
+    legacyAuthorId: authorIds[0] ?? null,
+  };
 }
 
 export async function adminCreateBook(write: BookWrite): Promise<string> {
   const supabase = getSupabaseAdminClient();
+  const { bookFields, authorIds, legacyAuthorId } = splitWrite(write);
   const { data, error } = await supabase
     .from("books")
-    .insert(write)
+    .insert({ ...bookFields, author_id: legacyAuthorId })
     .select("id")
     .single();
   if (error) throw new Error(error.message);
-  return data.id as string;
+  const bookId = data.id as string;
+  await setBookAuthors(bookId, authorIds);
+  return bookId;
 }
 
 export async function adminUpdateBook(
@@ -143,11 +203,13 @@ export async function adminUpdateBook(
   write: BookWrite,
 ): Promise<void> {
   const supabase = getSupabaseAdminClient();
+  const { bookFields, authorIds, legacyAuthorId } = splitWrite(write);
   // Drop cover_image when undefined so we don't overwrite an existing cover.
-  const patch: Record<string, unknown> = { ...write };
-  if (write.cover_image === undefined) delete patch.cover_image;
+  const patch: Record<string, unknown> = { ...bookFields, author_id: legacyAuthorId };
+  if (bookFields.cover_image === undefined) delete patch.cover_image;
   const { error } = await supabase.from("books").update(patch).eq("id", id);
   if (error) throw new Error(error.message);
+  await setBookAuthors(id, authorIds);
 }
 
 export async function adminDeleteBook(id: string): Promise<void> {
@@ -177,6 +239,11 @@ export async function adminUpdateStock(
   if (error) throw new Error(error.message);
 }
 
+/**
+ * Active individual authors for the book form's multi-select. Legacy
+ * combined-name rows (deactivated by the author-split migration) are
+ * excluded so only real individual profiles are selectable.
+ */
 export async function adminListAuthors(): Promise<
   { id: string; name: string }[]
 > {
@@ -184,6 +251,7 @@ export async function adminListAuthors(): Promise<
   const { data, error } = await supabase
     .from("authors")
     .select("id, name")
+    .eq("active", true)
     .order("name", { ascending: true });
   if (error) throw new Error(error.message);
   return (data ?? []) as { id: string; name: string }[];

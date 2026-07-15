@@ -31,6 +31,7 @@ export function AdminBookForm({
   const f = state.fieldErrors ?? {};
   const router = useRouter();
   const [, startTransition] = useTransition();
+  const selectedAuthorIds = book?.authors.map((a) => a.id) ?? [];
 
   return (
     <form action={formAction} className="space-y-5" noValidate>
@@ -51,22 +52,15 @@ export function AdminBookForm({
         error={f.subtitle}
       />
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <Select
-          label="Author"
-          name="author_id"
-          defaultValue={book?.author_id ?? ""}
-          options={authors}
-          placeholder="— None —"
-        />
-        <Select
-          label="Category"
-          name="category_id"
-          defaultValue={book?.category_id ?? ""}
-          options={categories}
-          placeholder="— None —"
-        />
-      </div>
+      <AuthorsMultiSelect authors={authors} defaultSelectedIds={selectedAuthorIds} />
+
+      <Select
+        label="Category"
+        name="category_id"
+        defaultValue={book?.category_id ?? ""}
+        options={categories}
+        placeholder="— None —"
+      />
 
       <div className="grid gap-5 sm:grid-cols-3">
         <FormField
@@ -252,6 +246,54 @@ function Select({
           </option>
         ))}
       </select>
+    </div>
+  );
+}
+
+/**
+ * Multi-select for a book's authors — a book can have any number of
+ * authors (0, 1, 2, 3+). Submits every checked id as a repeated
+ * `author_ids` form field, read via `formData.getAll("author_ids")`.
+ */
+function AuthorsMultiSelect({
+  authors,
+  defaultSelectedIds,
+}: {
+  authors: Option[];
+  defaultSelectedIds: string[];
+}) {
+  const selected = new Set(defaultSelectedIds);
+  return (
+    <div>
+      <label className="block text-sm font-medium text-ink">Authors</label>
+      <div className="mt-1.5 max-h-64 overflow-y-auto rounded-xl border border-hairline bg-bg p-3">
+        {authors.length === 0 ? (
+          <p className="px-1 py-2 text-sm text-muted">
+            No authors yet — add one under Admin → Authors first.
+          </p>
+        ) : (
+          <ul className="space-y-1">
+            {authors.map((a) => (
+              <li key={a.id}>
+                <label className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm text-ink hover:bg-bg-secondary">
+                  <input
+                    type="checkbox"
+                    name="author_ids"
+                    value={a.id}
+                    defaultChecked={selected.has(a.id)}
+                    className="h-4 w-4 rounded border-hairline text-primary focus:ring-primary"
+                  />
+                  {a.name}
+                </label>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <p className="mt-1.5 text-xs text-muted">
+        Select every author who contributed to this book. Leave all unchecked
+        for no author.
+      </p>
     </div>
   );
 }

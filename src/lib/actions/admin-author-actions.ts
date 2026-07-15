@@ -35,6 +35,8 @@ function extract(fd: FormData) {
     department: str(fd, "department"),
     college: str(fd, "college"),
     bio: str(fd, "bio"),
+    website: str(fd, "website"),
+    linkedin: str(fd, "linkedin"),
     display_order: str(fd, "display_order"),
     // Unchecked checkboxes are omitted from FormData → empty string → false.
     active: str(fd, "active") === "on" || str(fd, "active") === "true",
@@ -50,6 +52,8 @@ function buildWrite(v: AuthorFormValues): AuthorWrite {
     department: toNull(v.department),
     college: toNull(v.college),
     bio: toNull(v.bio),
+    website: toNull(v.website),
+    linkedin: toNull(v.linkedin),
     display_order: v.display_order,
     active: v.active,
   };

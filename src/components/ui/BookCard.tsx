@@ -10,6 +10,7 @@ import type { BookWithRelations } from "@/lib/types";
  */
 export function BookCard({ book }: { book: BookWithRelations }) {
   const outOfStock = book.stock <= 0;
+  const authorNames = book.authors.map((a) => a.name).join(", ");
 
   return (
     <Link href={`/books/${book.id}`} className="group block">
@@ -18,7 +19,7 @@ export function BookCard({ book }: { book: BookWithRelations }) {
           title={book.title}
           coverImage={book.cover_image}
           label={book.category?.name ?? book.course}
-          author={book.author?.name}
+          author={authorNames || undefined}
         />
 
         {outOfStock && (
@@ -32,9 +33,7 @@ export function BookCard({ book }: { book: BookWithRelations }) {
         <h3 className="font-serif text-[15px] font-medium leading-snug text-ink transition-colors group-hover:text-ink/70">
           {book.title}
         </h3>
-        {book.author?.name && (
-          <p className="text-sm text-muted">{book.author.name}</p>
-        )}
+        {authorNames && <p className="text-sm text-muted">{authorNames}</p>}
         <p className="pt-1 text-sm font-semibold text-ink">
           {formatPrice(book.price)}
         </p>

@@ -18,6 +18,8 @@ export interface Author {
   designation: string | null;
   department: string | null;
   college: string | null;
+  website: string | null;
+  linkedin: string | null;
   display_order: number;
   active: boolean;
   created_at: string;
@@ -71,15 +73,16 @@ export interface Book {
   delivery_charge: number | null;
 }
 
-// A book joined with its author + category, as used on the homepage.
+// A book joined with its authors (one book can have 1..N) + category, as
+// used on the homepage/catalog cards.
 export interface BookWithRelations extends Book {
-  author: Pick<Author, "id" | "name"> | null;
+  authors: Pick<Author, "id" | "name">[];
   category: Pick<Category, "id" | "name" | "slug"> | null;
 }
 
-// Full book detail with the complete author record and category.
+// Full book detail with the complete author records (ordered) and category.
 export interface BookDetail extends Book {
-  author: Author | null;
+  authors: Author[];
   category: Pick<Category, "id" | "name" | "slug"> | null;
 }
 
