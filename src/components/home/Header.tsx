@@ -14,9 +14,9 @@ export function Header() {
             <Image
               src="/logo-emblem.png"
               alt="Publish With Vaishu"
-              width={28}
-              height={28}
-              className="h-7 w-7 object-contain"
+              width={82}
+              height={46}
+              className="h-[46px] w-auto object-contain"
               priority
             />
             <span className="font-serif text-lg font-semibold tracking-tight text-ink">
