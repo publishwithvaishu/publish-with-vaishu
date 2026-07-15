@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { EMAIL, PHONE, whatsappLink } from "@/lib/site-config";
 
@@ -38,7 +39,14 @@ export function Footer() {
         <div className="grid gap-10 py-12 sm:grid-cols-2 sm:py-16 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
           <div>
             <span className="eyebrow">Est. Chennai</span>
-            <p className="mt-2 font-serif text-2xl font-medium tracking-tight text-ink">
+            <p className="mt-2 flex items-center gap-2 font-serif text-2xl font-medium tracking-tight text-ink">
+              <Image
+                src="/logo-emblem.png"
+                alt=""
+                width={32}
+                height={32}
+                className="h-8 w-8 object-contain"
+              />
               Publish With Vaishu
             </p>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">

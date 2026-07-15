@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 /** Centered card layout for the public auth pages. */
 export function AuthShell({
@@ -17,8 +18,15 @@ export function AuthShell({
       <div className="w-full max-w-md">
         <Link
           href="/"
-          className="block text-center font-serif text-lg font-semibold tracking-tight text-ink"
+          className="flex items-center justify-center gap-2 text-center font-serif text-lg font-semibold tracking-tight text-ink"
         >
+          <Image
+            src="/logo-emblem.png"
+            alt=""
+            width={28}
+            height={28}
+            className="h-7 w-7 object-contain"
+          />
           Publish With Vaishu
         </Link>
 

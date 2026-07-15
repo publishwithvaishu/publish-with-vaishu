@@ -1,18 +1,15 @@
 /**
  * Static, presentational site copy / contact details. UI-only — no secrets,
  * no backend.
- *
- * TODO(owner): PHONE is still a placeholder — replace with the publisher's
- * real number before pushing live.
  */
 
 // International format, digits only (used to build wa.me links).
 export const WHATSAPP_NUMBER = "918056112930";
 
 // Human-readable phone shown in the footer.
-export const PHONE = "+91 98400 00000"; // TODO: replace with real number
+export const PHONE = "+91 8056112930";
 
-export const EMAIL = "publishwithvaishu@gmail.com";
+export const EMAIL = "publishwithvaishu2525@gmail.com";
 
 // Publisher's LinkedIn — used by the floating social button next to WhatsApp.
 export const LINKEDIN_URL =

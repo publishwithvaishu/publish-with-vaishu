@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { logoutAction } from "@/lib/actions/auth-actions";
@@ -11,9 +12,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <Container>
           <div className="flex h-16 items-center justify-between gap-4">
             <Link href="/admin" className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-sm font-bold text-white">
-                V
-              </span>
+              <Image
+                src="/logo-emblem.png"
+                alt="Publish With Vaishu"
+                width={28}
+                height={28}
+                className="h-7 w-7 object-contain"
+                priority
+              />
               <span className="font-serif text-lg font-semibold tracking-tight text-ink">
                 Publish With Vaishu
               </span>

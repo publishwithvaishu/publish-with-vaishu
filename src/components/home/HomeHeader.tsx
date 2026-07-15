@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { CartCountBadge } from "@/components/cart/CartCountBadge";
 import { HeaderNav } from "@/components/home/HeaderNav";
@@ -35,9 +36,14 @@ export function HomeHeader() {
       <Container>
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-sm font-bold text-white">
-              V
-            </span>
+            <Image
+              src="/logo-emblem.png"
+              alt="Publish With Vaishu"
+              width={28}
+              height={28}
+              className="h-7 w-7 object-contain"
+              priority
+            />
             <span
               className={cn(
                 "font-serif text-lg font-semibold tracking-tight transition-colors duration-300",
