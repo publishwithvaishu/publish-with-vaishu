@@ -278,7 +278,7 @@ export default function ServicesPage() {
                     </a>
                     <Link
                       href="/books"
-                      className="inline-flex h-12 items-center rounded-full border border-white/40 px-6 text-sm font-semibold text-[#fbf6ec] hover:bg-white/10"
+                      className="glass-dark inline-flex h-12 items-center rounded-xl px-6 text-sm font-semibold text-ink transition-colors hover:border-[#e8b647]/40"
                     >
                       Browse our titles
                     </Link>
@@ -308,9 +308,9 @@ export default function ServicesPage() {
               {services.map((s) => (
                 <li
                   key={s.title}
-                  className="group rounded-2xl border border-hairline bg-bg p-6 shadow-[0_1px_2px_rgba(33,27,18,0.04)] transition-shadow duration-300 hover:shadow-[0_10px_30px_-16px_rgba(33,27,18,0.35)]"
+                  className="card-dark group rounded-2xl p-6"
                 >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-bg-secondary text-ink transition-colors duration-300 group-hover:bg-ink group-hover:text-[#fbf6ec]">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 text-gold transition-colors duration-300 group-hover:bg-[#e8b647] group-hover:text-[#1a1405]">
                     {s.icon}
                   </span>
                   <h3 className="mt-5 font-serif text-lg font-medium text-ink">
@@ -326,7 +326,7 @@ export default function ServicesPage() {
         </section>
 
         {/* Publishing Process timeline */}
-        <section className="border-y border-hairline bg-bg-secondary/50 py-16 sm:py-24">
+        <section className="border-y border-white/[0.06] bg-white/[0.02] py-16 sm:py-24">
           <Container>
             <div className="mx-auto max-w-2xl text-center">
               <span className="eyebrow">How it works</span>
@@ -342,7 +342,7 @@ export default function ServicesPage() {
             <ol className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {process.map((step) => (
                 <li key={step.n} className="relative pl-14">
-                  <span className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-full border border-ink/20 font-serif text-sm font-semibold text-ink">
+                  <span className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-full border border-[#e8b647]/40 bg-[#e8b647]/10 font-serif text-sm font-semibold text-gold">
                     {step.n}
                   </span>
                   <h3 className="font-serif text-lg font-medium text-ink">
@@ -373,7 +373,7 @@ export default function ServicesPage() {
                 </p>
                 <dl className="mt-8 space-y-6">
                   {reasons.map((r) => (
-                    <div key={r.title} className="border-l-2 border-ink/15 pl-4">
+                    <div key={r.title} className="border-l-2 border-[#e8b647]/40 pl-4">
                       <dt className="font-serif text-lg font-medium text-ink">
                         {r.title}
                       </dt>
@@ -392,7 +392,7 @@ export default function ServicesPage() {
                   width={1200}
                   height={1400}
                   sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="h-full w-full object-cover [filter:sepia(0.35)_saturate(1.1)]"
+                  className="h-full w-full object-cover [filter:grayscale(0.35)_brightness(0.85)]"
                 />
               </div>
             </div>
@@ -402,11 +402,11 @@ export default function ServicesPage() {
         {/* CTA */}
         <section className="pb-20">
           <Container>
-            <div className="relative overflow-hidden rounded-3xl bg-ink px-6 py-16 text-center sm:px-12">
-              <h2 className="mx-auto max-w-2xl font-serif text-3xl font-medium tracking-tight text-[#fbf6ec] sm:text-4xl">
+            <div className="card-dark relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#e8b647]/12 to-transparent px-6 py-16 text-center sm:px-12">
+              <h2 className="mx-auto max-w-2xl font-serif text-3xl font-medium tracking-tight text-ink sm:text-4xl">
                 Ready to publish your book?
               </h2>
-              <p className="mx-auto mt-4 max-w-xl leading-relaxed text-[#efe6d6]/80">
+              <p className="mx-auto mt-4 max-w-xl leading-relaxed text-muted">
                 Tell us about your manuscript and what you need. We&rsquo;ll guide
                 you through the rest.
               </p>
@@ -423,7 +423,7 @@ export default function ServicesPage() {
                 </a>
                 <a
                   href={`mailto:${EMAIL}`}
-                  className="inline-flex h-12 items-center rounded-full border border-white/40 px-7 text-sm font-semibold text-[#fbf6ec] hover:bg-white/10"
+                  className="glass-dark inline-flex h-12 items-center rounded-xl px-7 text-sm font-semibold text-ink transition-colors hover:border-[#e8b647]/40"
                 >
                   Email us
                 </a>

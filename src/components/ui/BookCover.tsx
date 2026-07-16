@@ -1,15 +1,16 @@
 import Image from "next/image";
 
-// Soft, on-brand cover tints (used for the typographic fallback cover).
+// Deep, on-brand cover tints for the dark theme (used for the typographic
+// fallback cover when a book has no uploaded image).
 const TINTS = [
-  "#FCFBF7",
-  "#F4EFE2",
-  "#EDEFE6",
-  "#EEEAF2",
-  "#E9ECF2",
-  "#F0ECE2",
-  "#E7EFEA",
-  "#F1EAE2",
+  "#151b26",
+  "#1a1f2b",
+  "#141a25",
+  "#181c28",
+  "#12171f",
+  "#1b2030",
+  "#141b22",
+  "#171d29",
 ];
 
 function pickTint(seed: string) {

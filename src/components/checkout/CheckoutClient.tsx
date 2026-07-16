@@ -45,7 +45,7 @@ export function CheckoutClient({
         </p>
         <Link
           href="/books"
-          className="mt-6 inline-flex h-12 items-center justify-center rounded-full bg-primary px-7 text-sm font-medium text-white tap-target"
+          className="mt-6 inline-flex h-12 items-center justify-center btn-gold rounded-full px-7 text-sm font-semibold tap-target"
         >
           Browse books
         </Link>
@@ -94,7 +94,7 @@ export function CheckoutClient({
               </p>
               <Link
                 href="/account/addresses/new"
-                className="mt-4 inline-flex h-11 items-center justify-center rounded-full bg-primary px-6 text-sm font-medium text-white"
+                className="mt-4 inline-flex h-11 items-center justify-center btn-gold rounded-full px-6 text-sm font-semibold"
               >
                 Add an address
               </Link>
@@ -184,7 +184,7 @@ export function CheckoutClient({
       <aside className="h-fit space-y-5 rounded-2xl border border-hairline p-6 lg:sticky lg:top-24">
         <h2 className="text-lg font-semibold text-ink">Order summary</h2>
         {toFree > 0 && (
-          <p className="rounded-lg border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
+          <p className="rounded-lg border border-emerald-400/30 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-300">
             Add {formatPrice(toFree)} more for free delivery.
           </p>
         )}
@@ -212,7 +212,7 @@ export function CheckoutClient({
             "inline-flex h-12 w-full items-center justify-center gap-2 rounded-full px-6 text-sm font-medium transition-colors disabled:opacity-60",
             razorpayEnabled
               ? "border border-hairline text-ink hover:bg-bg-secondary"
-              : "bg-primary text-white hover:bg-ink/90",
+              : "btn-gold",
           )}
         >
           {pending && (

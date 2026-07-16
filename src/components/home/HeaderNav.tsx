@@ -6,10 +6,9 @@ import { CartCountBadge } from "@/components/cart/CartCountBadge";
 import { cn } from "@/lib/cn";
 
 /**
- * Desktop top nav — Home / Books / Cart as raised "3D" pills (see .nav-3d
- * in globals.css), each with a small icon that animates on hover. Client
- * component only because it needs the current pathname for the active
- * state; mobile keeps using MobileNav's bottom bar.
+ * Desktop top nav — Home / Books / Services / Cart as dark glass pills with
+ * a gold active state. Client component only because it needs the current
+ * pathname for the active state; mobile keeps using MobileNav's bottom bar.
  */
 const links = [
   { label: "Home", href: "/", icon: HomeIcon },
@@ -17,7 +16,7 @@ const links = [
   { label: "Services", href: "/services", icon: ServicesIcon },
 ];
 
-export function HeaderNav({ light = false }: { light?: boolean }) {
+export function HeaderNav() {
   const pathname = usePathname();
 
   return (
@@ -31,10 +30,8 @@ export function HeaderNav({ light = false }: { light?: boolean }) {
             className={cn(
               "group flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium tap-target transition-colors duration-300",
               active
-                ? "border-primary bg-primary text-white"
-                : light
-                  ? "border-white/30 bg-white/10 text-[#fbf6ec] backdrop-blur-sm hover:bg-white/20"
-                  : "nav-3d border-hairline bg-bg text-ink hover:text-ink/60",
+                ? "btn-gold border-transparent"
+                : "glass-dark text-muted hover:border-[#e8b647]/40 hover:text-ink",
             )}
           >
             <Icon className="nav-icon" />
@@ -47,10 +44,8 @@ export function HeaderNav({ light = false }: { light?: boolean }) {
         className={cn(
           "group relative flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium tap-target transition-colors duration-300",
           pathname?.startsWith("/cart")
-            ? "border-primary bg-primary text-white"
-            : light
-              ? "border-white/30 bg-white/10 text-[#fbf6ec] backdrop-blur-sm hover:bg-white/20"
-              : "nav-3d border-hairline bg-bg text-ink hover:text-ink/60",
+            ? "btn-gold border-transparent"
+            : "glass-dark text-muted hover:border-[#e8b647]/40 hover:text-ink",
         )}
       >
         <CartIcon className="nav-icon" />

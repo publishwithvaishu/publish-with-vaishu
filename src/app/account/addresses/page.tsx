@@ -91,7 +91,7 @@ function AddressCard({ address }: { address: Address }) {
           <input type="hidden" name="id" value={address.id} />
           <ConfirmSubmit
             message="Delete this address?"
-            className="text-muted hover:text-red-600"
+            className="text-muted hover:text-red-300"
           >
             Delete
           </ConfirmSubmit>

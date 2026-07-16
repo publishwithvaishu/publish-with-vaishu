@@ -214,32 +214,35 @@ export default async function BookDetailPage({
                 </p>
               )}
 
-              <div className="mt-6 flex items-center gap-4">
-                <span className="text-3xl font-semibold tracking-tight text-ink">
-                  {formatPrice(book.price)}
-                </span>
-                <StockBadge inStock={inStock} stock={book.stock} />
-              </div>
+              {/* Purchase card — sticks alongside the cover on desktop. */}
+              <div className="card-dark mt-6 rounded-2xl p-5 md:sticky md:top-24">
+                <div className="flex flex-wrap items-center gap-4">
+                  <span className="text-3xl font-bold tracking-tight text-ink">
+                    {formatPrice(book.price)}
+                  </span>
+                  <StockBadge inStock={inStock} stock={book.stock} />
+                </div>
 
-              <DeliveryChargeNote deliveryCharge={book.delivery_charge} />
+                <DeliveryChargeNote deliveryCharge={book.delivery_charge} />
 
-              <div className="mt-8 max-w-md">
-                <AddToCartButtons
-                  book={{
-                    id: book.id,
-                    title: book.title,
-                    price: book.price,
-                    cover_image: book.cover_image,
-                    author_name: authorNamesJoined || null,
-                    stock: book.stock,
-                    delivery_charge: book.delivery_charge,
-                  }}
-                />
+                <div className="mt-6">
+                  <AddToCartButtons
+                    book={{
+                      id: book.id,
+                      title: book.title,
+                      price: book.price,
+                      cover_image: book.cover_image,
+                      author_name: authorNamesJoined || null,
+                      stock: book.stock,
+                      delivery_charge: book.delivery_charge,
+                    }}
+                  />
+                </div>
               </div>
 
               {/* Quick facts */}
               {facts.length > 0 && (
-                <dl className="mt-10 grid grid-cols-2 gap-x-6 gap-y-4 rounded-xl border border-indigo-100 bg-indigo-50/40 p-6 sm:grid-cols-3">
+                <dl className="glass-dark mt-10 grid grid-cols-2 gap-x-6 gap-y-4 rounded-2xl p-6 sm:grid-cols-3">
                   {facts.map((f) => (
                     <div key={f.label}>
                       <dt className="text-xs uppercase tracking-wide text-muted">
@@ -271,11 +274,11 @@ export default async function BookDetailPage({
               <h2 className="text-2xl font-semibold tracking-tight text-ink">
                 {book.authors.length === 1 ? "About the author" : "Written by"}
               </h2>
-              <div className="mt-6 space-y-10">
+              <div className="mt-6 grid gap-4 lg:grid-cols-2">
                 {book.authors.map((author) => (
                   <div
                     key={author.id}
-                    className="flex flex-col gap-5 sm:flex-row sm:gap-7"
+                    className="card-dark flex flex-col gap-5 rounded-2xl p-5 sm:flex-row sm:gap-6"
                   >
                     <AuthorAvatar name={author.name} photo={author.photo} />
                     <div className="max-w-2xl">
@@ -365,8 +368,8 @@ function StockBadge({ inStock, stock }: { inStock: boolean; stock: number }) {
     );
   }
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
-      <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" aria-hidden />
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-sm font-medium text-emerald-300">
+      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" aria-hidden />
       In stock
       {stock <= 5 ? ` — only ${stock} left` : ""}
     </span>
@@ -382,7 +385,7 @@ function DeliveryChargeNote({ deliveryCharge }: { deliveryCharge: number | null 
   return (
     <p className="mt-3 text-sm text-muted">
       {deliveryCharge === 0 ? (
-        <span className="font-medium text-emerald-700">Free delivery on this title</span>
+        <span className="font-medium text-emerald-300">Free delivery on this title</span>
       ) : (
         <>Delivery charge: <span className="font-medium text-ink">{formatPrice(deliveryCharge)}</span></>
       )}

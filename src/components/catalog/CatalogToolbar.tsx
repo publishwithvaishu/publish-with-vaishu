@@ -6,8 +6,14 @@ import { cn } from "@/lib/cn";
 import { pickAccent } from "@/lib/accents";
 import type { Category, SortOption } from "@/lib/types";
 
+/**
+ * Catalog toolbar — premium search, category chips, price filter, sort and
+ * grid/list view toggle, wrapped in the homepage's glass filter card.
+ * Filter/search/sort logic is unchanged: every control still just merges
+ * params into the URL and lets the existing server query run as before.
+ */
 const SORTS: { value: SortOption; label: string }[] = [
-  { value: "newest", label: "Newest" },
+  { value: "newest", label: "Newest First" },
   { value: "price-asc", label: "Price: Low to High" },
   { value: "price-desc", label: "Price: High to Low" },
 ];
@@ -20,6 +26,7 @@ export function CatalogToolbar({ categories }: { categories: Category[] }) {
 
   const currentCategory = params.get("category") ?? "";
   const currentSort = (params.get("sort") as SortOption) || "newest";
+  const currentView = params.get("view") === "list" ? "list" : "grid";
   const [q, setQ] = useState(params.get("q") ?? "");
   const [minPrice, setMinPrice] = useState(params.get("min") ?? "");
   const [maxPrice, setMaxPrice] = useState(params.get("max") ?? "");
@@ -41,29 +48,36 @@ export function CatalogToolbar({ categories }: { categories: Category[] }) {
     navigate({ q: q.trim() || null, min: minPrice || null, max: maxPrice || null });
   }
 
+  function resetAll() {
+    setQ("");
+    setMinPrice("");
+    setMaxPrice("");
+    startTransition(() => router.push(pathname));
+  }
+
   const isAll = currentCategory === "";
 
   return (
-    <div className={cn("space-y-5", isPending && "opacity-60")}>
-      {/* Search */}
+    <div className={cn("space-y-6 transition-opacity", isPending && "opacity-60")}>
+      {/* Premium search — same shape as the homepage search bar. */}
       <form onSubmit={onSearchSubmit} role="search">
         <label htmlFor="catalog-search" className="sr-only">
           Search books
         </label>
-        <div className="flex items-center gap-2 rounded-full border border-hairline bg-bg px-4 py-1.5 focus-within:border-ink">
+        <div className="flex items-center gap-2 rounded-2xl border border-white/[0.08] bg-[#141a24] py-2 pl-4 pr-2 shadow-[0_10px_30px_-18px_rgba(0,0,0,0.9)] transition-colors focus-within:border-[#e8b647]/50">
           <SearchIcon />
           <input
             id="catalog-search"
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Search by title, author or ISBN"
+            placeholder="Search by title, author, ISBN or keyword…"
             autoComplete="off"
-            className="h-11 w-full bg-transparent text-sm text-ink placeholder:text-muted focus:outline-none"
+            className="h-11 w-full min-w-0 bg-transparent text-[15px] text-ink placeholder:text-muted focus:outline-none"
           />
           <button
             type="submit"
-            className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-white tap-target"
+            className="btn-gold h-11 shrink-0 rounded-xl px-6 text-sm font-semibold tap-target"
           >
             Search
           </button>
@@ -71,7 +85,7 @@ export function CatalogToolbar({ categories }: { categories: Category[] }) {
       </form>
 
       {/* Category chips */}
-      <div className="flex gap-2.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="-mx-5 flex gap-2.5 overflow-x-auto px-5 pb-1 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <Chip active={isAll} onClick={() => navigate({ category: null })}>
           All books
         </Chip>
@@ -90,49 +104,81 @@ export function CatalogToolbar({ categories }: { categories: Category[] }) {
         ))}
       </div>
 
-      {/* Price + sort */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <form
-          onSubmit={onSearchSubmit}
-          className="flex items-end gap-2"
-          aria-label="Filter by price"
-        >
-          <PriceField
-            id="min-price"
-            label="Min ₹"
-            value={minPrice}
-            onChange={setMinPrice}
-          />
-          <PriceField
-            id="max-price"
-            label="Max ₹"
-            value={maxPrice}
-            onChange={setMaxPrice}
-          />
+      {/* Filter card — price, sort, view */}
+      <div className="glass-dark rounded-2xl p-5">
+        <div className="flex items-center justify-between">
+          <span className="flex items-center gap-2 text-sm font-semibold text-ink">
+            <FilterIcon /> Filters
+          </span>
           <button
-            type="submit"
-            className="h-11 rounded-full border border-hairline px-4 text-sm font-medium text-ink hover:bg-bg-secondary tap-target"
+            type="button"
+            onClick={resetAll}
+            className="text-sm font-medium text-gold hover:underline"
           >
-            Apply
+            Clear All
           </button>
-        </form>
+        </div>
 
-        <div className="flex items-center gap-2">
-          <label htmlFor="sort" className="text-sm text-muted">
-            Sort
-          </label>
-          <select
-            id="sort"
-            value={currentSort}
-            onChange={(e) => navigate({ sort: e.target.value })}
-            className="h-11 rounded-full border border-hairline bg-bg px-4 text-sm text-ink focus:border-ink focus:outline-none tap-target"
+        <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <form
+            onSubmit={onSearchSubmit}
+            className="flex items-end gap-2"
+            aria-label="Filter by price"
           >
-            {SORTS.map((s) => (
-              <option key={s.value} value={s.value}>
-                {s.label}
-              </option>
-            ))}
-          </select>
+            <PriceField
+              id="min-price"
+              label="Min ₹"
+              value={minPrice}
+              onChange={setMinPrice}
+            />
+            <PriceField
+              id="max-price"
+              label="Max ₹"
+              value={maxPrice}
+              onChange={setMaxPrice}
+            />
+            <button
+              type="submit"
+              className="btn-gold h-11 shrink-0 rounded-xl px-5 text-sm font-semibold tap-target"
+            >
+              Apply
+            </button>
+          </form>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <label htmlFor="sort" className="text-sm text-muted">
+              Sort By:
+            </label>
+            <select
+              id="sort"
+              value={currentSort}
+              onChange={(e) => navigate({ sort: e.target.value })}
+              className="h-11 rounded-xl border border-white/10 bg-[#141a24] px-3 text-sm text-ink focus:border-[#e8b647]/60 focus:outline-none tap-target"
+            >
+              {SORTS.map((s) => (
+                <option key={s.value} value={s.value} className="bg-[#141a24]">
+                  {s.label}
+                </option>
+              ))}
+            </select>
+
+            <span className="flex overflow-hidden rounded-lg border border-white/10">
+              <ViewToggle
+                active={currentView === "grid"}
+                onClick={() => navigate({ view: null })}
+                label="Grid view"
+              >
+                <GridIcon />
+              </ViewToggle>
+              <ViewToggle
+                active={currentView === "list"}
+                onClick={() => navigate({ view: "list" })}
+                label="List view"
+              >
+                <ListIcon />
+              </ViewToggle>
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -147,7 +193,7 @@ function Chip({
 }: {
   active: boolean;
   onClick: () => void;
-  /** Optional pastel resting tint (decorative); active state is always indigo. */
+  /** Optional resting tint (decorative); active state is always gold. */
   accentClasses?: string;
   children: React.ReactNode;
 }) {
@@ -159,10 +205,37 @@ function Chip({
       className={cn(
         "inline-flex shrink-0 items-center rounded-full border px-4 py-2.5 text-sm font-medium transition-all duration-200 tap-target",
         active
-          ? "border-primary bg-primary text-white card-soft"
+          ? "btn-gold border-transparent"
           : accentClasses
-            ? `${accentClasses} hover:brightness-[0.98]`
-            : "border-hairline bg-bg text-ink hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700",
+            ? `${accentClasses} hover:brightness-125`
+            : "glass-dark text-muted hover:border-[#e8b647]/40 hover:text-ink",
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+function ViewToggle({
+  active,
+  onClick,
+  label,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      aria-pressed={active}
+      className={cn(
+        "flex h-11 w-11 items-center justify-center transition-colors",
+        active ? "bg-[#e8b647]/90 text-[#1a1405]" : "text-muted hover:text-ink",
       )}
     >
       {children}
@@ -193,28 +266,58 @@ function PriceField({
         min={0}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-11 w-24 rounded-full border border-hairline bg-bg px-4 text-sm text-ink focus:border-ink focus:outline-none"
+        className="h-11 w-24 rounded-xl border border-white/[0.08] bg-[#141a24] px-3 text-sm text-ink focus:border-[#e8b647]/60 focus:outline-none"
       />
     </div>
   );
 }
 
+function svgProps(size = 18) {
+  return {
+    width: size,
+    height: size,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.6,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    "aria-hidden": true,
+  };
+}
+
 function SearchIcon() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="shrink-0 text-muted"
-      aria-hidden="true"
-    >
+    <svg {...svgProps(20)} className="shrink-0 text-muted">
       <circle cx="11" cy="11" r="7" />
       <path d="m21 21-4.3-4.3" />
+    </svg>
+  );
+}
+function FilterIcon() {
+  return (
+    <svg {...svgProps()}>
+      <path d="M4 7h16M7 12h10M10 17h4" />
+    </svg>
+  );
+}
+function GridIcon() {
+  return (
+    <svg {...svgProps(16)}>
+      <rect x="4" y="4" width="6.5" height="6.5" rx="1" />
+      <rect x="13.5" y="4" width="6.5" height="6.5" rx="1" />
+      <rect x="4" y="13.5" width="6.5" height="6.5" rx="1" />
+      <rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1" />
+    </svg>
+  );
+}
+function ListIcon() {
+  return (
+    <svg {...svgProps(16)}>
+      <path d="M8 6h12M8 12h12M8 18h12" />
+      <circle cx="4" cy="6" r="1" fill="currentColor" stroke="none" />
+      <circle cx="4" cy="12" r="1" fill="currentColor" stroke="none" />
+      <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none" />
     </svg>
   );
 }

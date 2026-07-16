@@ -17,7 +17,7 @@ export function CartView() {
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center rounded-2xl border border-hairline px-6 py-20 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/5 text-gold">
           <svg
             width="28"
             height="28"
@@ -43,7 +43,7 @@ export function CartView() {
         </p>
         <Link
           href="/books"
-          className="mt-7 inline-flex h-12 items-center justify-center rounded-full bg-primary px-7 text-sm font-medium text-white tap-target"
+          className="mt-7 inline-flex h-12 items-center justify-center btn-gold rounded-full px-7 text-sm font-semibold tap-target"
         >
           Explore books
         </Link>
@@ -134,7 +134,7 @@ export function CartView() {
 
         <Link
           href="/checkout"
-          className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-full bg-primary px-6 text-sm font-medium text-white transition-colors hover:bg-ink/90 tap-target"
+          className="mt-6 inline-flex h-12 w-full items-center justify-center btn-gold rounded-full px-6 text-sm font-semibold tap-target"
         >
           Proceed to checkout
         </Link>

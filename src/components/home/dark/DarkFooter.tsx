@@ -4,8 +4,9 @@ import { Container } from "@/components/ui/Container";
 import { EMAIL, PHONE, LINKEDIN_URL, whatsappLink } from "@/lib/site-config";
 
 /**
- * Shared premium dark footer (every customer page) — same link groups and
- * contact details as before, dark luxury skin with gold group headings.
+ * Premium dark footer (homepage only) — same link groups and contact
+ * details as the shared Footer, restyled for the dark theme. Other routes
+ * keep using the existing Footer component untouched.
  */
 const groups = [
   {
@@ -35,7 +36,7 @@ const groups = [
   },
 ];
 
-export function Footer() {
+export function DarkFooter() {
   return (
     <footer className="mt-16 border-t border-white/[0.06] bg-[#080b11]">
       <Container>

@@ -38,7 +38,7 @@ export default function ContactPage() {
             </p>
 
             <div className="mt-8 space-y-4">
-              <div className="rounded-2xl border border-hairline bg-bg p-6">
+              <div className="card-dark rounded-2xl p-6">
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
                   Email
                 </h2>
@@ -50,7 +50,7 @@ export default function ContactPage() {
                 </a>
               </div>
 
-              <div className="rounded-2xl border border-hairline bg-bg p-6">
+              <div className="card-dark rounded-2xl p-6">
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
                   Location
                 </h2>
@@ -59,7 +59,7 @@ export default function ContactPage() {
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-hairline bg-bg p-6">
+              <div className="card-dark rounded-2xl p-6">
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
                   Your orders
                 </h2>

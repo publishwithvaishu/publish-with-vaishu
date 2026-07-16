@@ -2,9 +2,14 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-canvas px-6 text-center">
-      <div className="rounded-2xl border border-hairline bg-bg p-10 sm:p-14">
-        <span className="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-indigo-700">
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-canvas px-6 text-center">
+      {/* Ambient gold glow — decorative. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[440px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,_rgba(232,182,71,0.12)_0%,_transparent_70%)]"
+      />
+      <div className="card-dark relative rounded-3xl p-10 sm:p-14">
+        <span className="inline-flex items-center rounded-full border border-[#e8b647]/40 bg-[#e8b647]/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gold">
           404
         </span>
         <h1 className="mt-5 font-serif text-3xl text-ink sm:text-4xl">
@@ -16,13 +21,13 @@ export default function NotFound() {
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
           <Link
             href="/"
-            className="inline-flex h-12 items-center justify-center rounded-full bg-primary px-7 text-sm font-medium text-white shadow-[0_1px_2px_rgba(15,23,42,0.06)] transition-all duration-200 hover:bg-indigo-700 hover:shadow-md active:scale-[0.99]"
+            className="btn-gold inline-flex h-12 items-center justify-center rounded-xl px-7 text-sm font-semibold"
           >
             Back to home
           </Link>
           <Link
             href="/books"
-            className="inline-flex h-12 items-center justify-center rounded-full border border-hairline bg-bg px-7 text-sm font-medium text-ink transition-all duration-200 hover:bg-bg-secondary"
+            className="glass-dark inline-flex h-12 items-center justify-center rounded-xl px-7 text-sm font-semibold text-ink transition-colors hover:border-[#e8b647]/40"
           >
             Browse books
           </Link>

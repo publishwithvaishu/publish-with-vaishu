@@ -159,6 +159,78 @@ body {
   color: var(--color-ink);
 }
 
+/* ------------------------------------------------------------------ */
+/*  Dark "luxury bookstore" theme — SCOPED to the homepage only (see    */
+/*  src/app/page.tsx). Deep navy-black surfaces, gold accent, glassy    */
+/*  cards. Only overrides CSS variables + adds a few utilities below,   */
+/*  so every other route (books, cart, checkout, admin) keeps its       */
+/*  current look and functionality untouched.                           */
+/* ------------------------------------------------------------------ */
+.theme-dark {
+  --color-bg: #151a24; /* raised surfaces — cards, inputs */
+  --color-bg-secondary: #1c2330; /* subtle fills / hovers */
+  --color-canvas: #0b0f16; /* page background */
+  --color-ink: #f2f4f8; /* near-white text */
+  --color-muted: #98a2b3; /* secondary text */
+  --color-hairline: #232b3a; /* borders */
+  --color-primary: #b47d0e; /* deep gold — active states, badges */
+  --color-primary-hover: #d9a62e;
+  --font-serif: var(--font-playfair), ui-serif, Georgia, Cambria,
+    "Times New Roman", serif;
+
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  color-scheme: dark;
+}
+
+/* Solid gold CTA — dark text on a soft gold gradient, like the reference. */
+@utility btn-gold {
+  background: linear-gradient(135deg, #f3cd6b 0%, #e2ac35 55%, #d19a21 100%);
+  color: #1a1405;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.35) inset,
+    0 8px 20px -10px rgba(226, 172, 53, 0.55);
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease,
+    filter 150ms ease;
+}
+.btn-gold:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+.btn-gold:active {
+  transform: translateY(0.5px);
+}
+
+/* Frosted glass panel on dark backgrounds. */
+@utility glass-dark {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+/* Raised dark card with a soft premium shadow + hover lift. */
+@utility card-dark {
+  background: linear-gradient(180deg, #171d28 0%, #12161f 100%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 14px 34px -18px rgba(0, 0, 0, 0.8);
+  transition:
+    transform 250ms ease,
+    border-color 250ms ease,
+    box-shadow 250ms ease;
+}
+.card-dark:hover {
+  transform: translateY(-2px);
+  border-color: rgba(232, 182, 71, 0.35);
+  box-shadow: 0 20px 44px -18px rgba(0, 0, 0, 0.85);
+}
+
+/* Thin gold gradient text for premium headings/taglines. */
+@utility text-gold {
+  color: #e8b647;
+}
+
 /* Admin dashboard opts back out of the warm theme above (it's an internal
    tool, not a customer-facing page) by re-declaring the original light
    SaaS token values for its own subtree. */

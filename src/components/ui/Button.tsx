@@ -10,25 +10,27 @@ type Variant =
 type Size = "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-full font-medium " +
+  "inline-flex items-center justify-center gap-2 rounded-full font-semibold " +
   "tap-target transition-all duration-200 active:scale-[0.99] " +
   "focus-visible:outline-2 focus-visible:outline-offset-2 " +
   "disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100";
 
+// Dark luxury palette — gold is the primary action colour sitewide.
 const variants: Record<Variant, string> = {
-  primary:
-    "bg-primary text-white card-soft hover:bg-indigo-700 hover:shadow-md",
+  primary: "btn-gold",
   secondary:
-    "bg-bg text-ink border border-hairline card-soft hover:bg-bg-secondary",
+    "glass-dark text-ink hover:border-[#e8b647]/40 hover:-translate-y-px",
   outline:
-    "border border-hairline text-ink bg-transparent hover:bg-bg-secondary hover:border-ink/20",
-  danger: "bg-red-600 text-white card-soft hover:bg-red-700",
-  success: "bg-emerald-600 text-white card-soft hover:bg-emerald-700",
+    "border border-[#e8b647]/50 text-gold bg-transparent hover:bg-[#e8b647]/10 hover:-translate-y-px",
+  danger:
+    "border border-red-400/40 bg-red-500/15 text-red-300 hover:bg-red-500/25",
+  success:
+    "border border-emerald-400/40 bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25",
 };
 
 const sizes: Record<Size, string> = {
-  md: "px-5 text-sm",
-  lg: "px-7 text-base",
+  md: "h-11 px-5 text-sm",
+  lg: "h-12 px-7 text-base",
 };
 
 type CommonProps = {

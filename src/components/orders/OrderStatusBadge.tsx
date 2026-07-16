@@ -15,8 +15,8 @@ const STYLES: Record<OrderStatus, string> = {
   processing: "bg-bg-secondary text-ink",
   packed: "bg-bg-secondary text-ink",
   shipped: "bg-blue-50 text-blue-700",
-  delivered: "bg-green-50 text-green-700",
-  cancelled: "bg-red-50 text-red-700",
+  delivered: "border border-emerald-400/30 bg-emerald-500/10 text-emerald-300",
+  cancelled: "border border-red-400/30 bg-red-500/10 text-red-300",
 };
 
 export function OrderStatusBadge({ status }: { status: OrderStatus }) {

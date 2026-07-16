@@ -2,14 +2,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { CartCountBadge } from "@/components/cart/CartCountBadge";
-import { HeaderNav } from "@/components/home/HeaderNav";
 
 /**
- * Shared premium dark header (every customer page): gold-framed logo mark,
- * brand wordmark + tagline, nav pills, cart + account icons. Same links and
- * behavior as before — dark luxury skin only.
+ * Premium dark header (homepage only) — gold-framed logo mark, brand
+ * wordmark with tagline, desktop nav, cart + account icons. Sticky and
+ * glassy over the dark canvas. Every link reuses existing routes.
  */
-export function Header() {
+export function DarkHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#0b0f16]/85 backdrop-blur-md">
       <Container>
@@ -35,13 +34,27 @@ export function Header() {
             </span>
           </Link>
 
-          <HeaderNav />
+          <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
+            {[
+              { label: "Home", href: "/" },
+              { label: "Books", href: "/books" },
+              { label: "Services", href: "/services" },
+            ].map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="rounded-full px-4 py-2 text-sm font-medium text-muted transition-colors hover:bg-white/5 hover:text-ink"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </nav>
 
           <div className="flex shrink-0 items-center gap-1">
             <Link
               href="/cart"
               aria-label="Your cart"
-              className="relative flex items-center justify-center rounded-full text-muted transition-colors tap-target hover:bg-white/5 hover:text-[#e8b647] md:hidden"
+              className="relative flex items-center justify-center rounded-full text-muted transition-colors tap-target hover:bg-white/5 hover:text-[#e8b647]"
             >
               <CartIcon />
               <CartCountBadge />

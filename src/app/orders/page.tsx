@@ -41,7 +41,7 @@ export default async function OrdersPage() {
               </p>
               <Link
                 href="/books"
-                className="mt-6 inline-flex h-12 items-center justify-center rounded-full bg-primary px-7 text-sm font-medium text-white tap-target"
+                className="mt-6 inline-flex h-12 items-center justify-center btn-gold rounded-full px-7 text-sm font-semibold tap-target"
               >
                 Browse books
               </Link>

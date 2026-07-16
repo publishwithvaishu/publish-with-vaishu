@@ -128,12 +128,12 @@ export function RazorpayButton({
 
   return (
     <div className="space-y-2">
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-red-300">{error}</p>}
       <button
         type="button"
         onClick={pay}
         disabled={pending || disabled}
-        className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-sm font-medium text-white transition-colors hover:bg-ink/90 disabled:opacity-60"
+        className="inline-flex h-12 w-full items-center justify-center gap-2 btn-gold rounded-full px-6 text-sm font-semibold disabled:opacity-60"
       >
         {pending ? "Opening payment…" : "Pay online"}
       </button>

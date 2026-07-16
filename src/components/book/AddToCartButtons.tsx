@@ -51,7 +51,7 @@ export function AddToCartButtons({ book }: Props) {
       <button
         type="button"
         onClick={handleBuyNow}
-        className="inline-flex h-12 flex-1 items-center justify-center rounded-full bg-primary px-6 text-sm font-medium text-white transition-colors hover:bg-ink/90 tap-target"
+        className="inline-flex h-12 flex-1 items-center justify-center btn-gold rounded-full px-6 text-sm font-semibold tap-target"
       >
         Buy Now
       </button>

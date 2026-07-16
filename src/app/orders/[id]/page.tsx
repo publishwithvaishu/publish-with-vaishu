@@ -62,7 +62,7 @@ export default async function OrderDetailPage({
               <form action={switchAccount}>
                 <button
                   type="submit"
-                  className="inline-flex h-11 items-center rounded-full bg-primary px-6 text-sm font-medium text-white"
+                  className="inline-flex h-11 items-center btn-gold rounded-full px-6 text-sm font-semibold"
                 >
                   Sign in with a different account
                 </button>
@@ -104,8 +104,8 @@ export default async function OrderDetailPage({
       <main className="pb-24 md:pb-0">
         <Container className="py-8 sm:py-12">
           {justPlaced && (
-            <div className="mb-8 rounded-2xl border border-green-200 bg-green-50 p-6 text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-600 text-white">
+            <div className="mb-8 rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-6 text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-[#06120b]">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                   <path d="M5 12.5l4 4 10-10" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -113,7 +113,7 @@ export default async function OrderDetailPage({
               <h2 className="mt-3 font-serif text-xl text-ink">
                 Thank you! Your order is confirmed.
               </h2>
-              <p className="mt-1 text-sm text-green-700">
+              <p className="mt-1 text-sm text-emerald-300">
                 We’ve placed order {order.order_number}. A confirmation is on
                 its way.
               </p>
@@ -174,7 +174,7 @@ export default async function OrderDetailPage({
                         href={order.tracking_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-3 inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-medium text-white"
+                        className="mt-3 inline-flex h-10 items-center btn-gold rounded-full px-5 text-sm font-semibold"
                       >
                         Track shipment →
                       </a>

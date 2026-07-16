@@ -36,7 +36,7 @@ export function OrderStatusStepper({
 
   if (status === "cancelled") {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      <div className="rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
         This order was cancelled.
       </div>
     );
@@ -77,7 +77,7 @@ export function OrderStatusStepper({
               className={cn(
                 "relative z-10 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border",
                 done
-                  ? "border-primary bg-primary text-white"
+                  ? "border-[#e8b647] bg-[#e8b647] text-[#1a1405]"
                   : "border-hairline bg-bg",
               )}
               aria-hidden

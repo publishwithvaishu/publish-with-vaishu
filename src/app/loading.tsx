@@ -3,7 +3,7 @@ export default function Loading() {
     <div className="flex min-h-[60vh] items-center justify-center bg-canvas">
       <div className="flex flex-col items-center gap-4" role="status" aria-label="Loading">
         <svg
-          className="h-7 w-7 animate-spin text-indigo-600"
+          className="h-7 w-7 animate-spin text-gold"
           viewBox="0 0 24 24"
           fill="none"
           aria-hidden="true"

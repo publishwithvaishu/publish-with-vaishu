@@ -29,7 +29,7 @@ export default async function PaymentFailedPage({
       <main className="pb-24 md:pb-0">
         <Container className="py-12 sm:py-16">
           <div className="mx-auto max-w-lg text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-red-600">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-500/15 text-red-300">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                 <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
               </svg>
@@ -40,7 +40,7 @@ export default async function PaymentFailedPage({
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
               <Link
                 href="/checkout"
-                className="inline-flex h-12 items-center justify-center rounded-full bg-primary px-7 text-sm font-medium text-white"
+                className="inline-flex h-12 items-center justify-center btn-gold rounded-full px-7 text-sm font-semibold"
               >
                 Try again
               </Link>

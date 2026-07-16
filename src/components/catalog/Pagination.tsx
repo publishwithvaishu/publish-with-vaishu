@@ -70,10 +70,10 @@ function PageLink({
   children: React.ReactNode;
 } & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href">) {
   const className = cn(
-    "inline-flex h-11 min-w-11 items-center justify-center rounded-full border px-3 text-sm font-medium transition-all duration-200",
+    "inline-flex h-11 min-w-11 items-center justify-center rounded-full border px-3 text-sm font-semibold transition-all duration-200",
     active
-      ? "border-primary bg-primary text-white card-soft"
-      : "border-hairline bg-bg text-ink hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700",
+      ? "btn-gold border-transparent"
+      : "glass-dark text-muted hover:border-[#e8b647]/40 hover:text-ink",
     disabled && "pointer-events-none opacity-40",
   );
 

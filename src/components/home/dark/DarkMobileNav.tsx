@@ -1,54 +1,43 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { CartCountBadge } from "@/components/cart/CartCountBadge";
-import { cn } from "@/lib/cn";
 
 /**
- * Mobile bottom navigation (spec §4): Home, Categories, Cart, Account.
- * Hidden on md+ where the header serves navigation. ≥44px tap targets.
- * Dark luxury skin with a gold active state — same destinations as before.
+ * Dark bottom navigation (homepage only) — same four destinations as the
+ * shared MobileNav (Home / Categories / Cart / Account), restyled to match
+ * the reference: dark glass bar, gold active state. Other routes keep the
+ * existing MobileNav untouched.
  */
 const items = [
-  { label: "Home", href: "/", icon: HomeIcon, badge: false },
-  { label: "Categories", href: "/books", icon: GridIcon, badge: false },
-  { label: "Cart", href: "/cart", icon: CartIcon, badge: true },
-  { label: "Account", href: "/account", icon: UserIcon, badge: false },
+  { label: "Home", href: "/", icon: HomeIcon, badge: false, active: true },
+  { label: "Categories", href: "/books", icon: GridIcon, badge: false, active: false },
+  { label: "Cart", href: "/cart", icon: CartIcon, badge: true, active: false },
+  { label: "Account", href: "/account", icon: UserIcon, badge: false, active: false },
 ];
 
-export function MobileNav() {
-  const pathname = usePathname();
-
+export function DarkMobileNav() {
   return (
     <nav
       aria-label="Primary"
       className="fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.07] bg-[#0b0f16]/92 backdrop-blur-md md:hidden"
     >
       <ul className="mx-auto flex max-w-md items-stretch justify-around">
-        {items.map(({ label, href, icon: Icon, badge }) => {
-          const active =
-            href === "/" ? pathname === "/" : pathname?.startsWith(href);
-          return (
-            <li key={label} className="flex-1">
-              <Link
-                href={href}
-                className={cn(
-                  "flex flex-col items-center justify-center gap-1 py-2 text-[11px] font-medium transition-colors tap-target",
-                  active ? "text-gold" : "text-muted hover:text-ink",
-                )}
-              >
-                <span className="relative">
-                  <Icon />
-                  {badge && <CartCountBadge />}
-                </span>
-                {label}
-              </Link>
-            </li>
-          );
-        })}
+        {items.map(({ label, href, icon: Icon, badge, active }) => (
+          <li key={label} className="flex-1">
+            <Link
+              href={href}
+              className={`flex flex-col items-center justify-center gap-1 py-2 text-[11px] font-medium tap-target ${
+                active ? "text-gold" : "text-muted hover:text-ink"
+              }`}
+            >
+              <span className="relative">
+                <Icon />
+                {badge && <CartCountBadge />}
+              </span>
+              {label}
+            </Link>
+          </li>
+        ))}
       </ul>
-      {/* Safe-area spacer for devices with a home indicator. */}
       <div className="h-[env(safe-area-inset-bottom)]" />
     </nav>
   );

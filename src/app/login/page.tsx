@@ -34,7 +34,7 @@ export default async function LoginPage({ searchParams }: { searchParams: SP }) 
       footer={
         <>
           New to Publish With Vaishu?{" "}
-          <Link href="/register" className="font-medium text-ink underline">
+          <Link href="/register" className="font-medium text-gold hover:underline">
             Create an account
           </Link>
         </>
