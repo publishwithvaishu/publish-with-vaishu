@@ -3,10 +3,10 @@ import { cn } from "@/lib/cn";
 /**
  * Centered content column with mobile-first horizontal padding.
  *
- * Default max width is wide (min(1600px, 92vw)) on desktop (lg: 1024px+) so
+ * Default max width is wide (min(1800px, 96vw)) on desktop (lg: 1024px+) so
  * the site uses available screen space on large monitors instead of leaving
  * big empty side margins — matching modern e-commerce layouts (Amazon/
- * Flipkart/Apple). The `92vw` half keeps a comfortable minimum side margin
+ * Flipkart/Apple). The `96vw` half keeps a comfortable minimum side margin
  * between breakpoints, without ever going full edge-to-edge. The cap only
  * applies from `lg:` up — below that (mobile/tablet) the container stays
  * unconstrained (just the padding below), exactly as before, since 92vw
@@ -20,7 +20,7 @@ import { cn } from "@/lib/cn";
 export function Container({
   children,
   className,
-  maxWidth = "lg:max-w-[min(1600px,92vw)]",
+  maxWidth = "lg:max-w-[min(1800px,96vw)]",
 }: {
   children: React.ReactNode;
   className?: string;
