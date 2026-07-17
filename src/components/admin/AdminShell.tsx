@@ -9,7 +9,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-canvas">
       <header className="sticky top-0 z-40 border-b border-hairline bg-bg/70 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur-xl supports-[backdrop-filter]:bg-bg/60">
-        <Container>
+        <Container maxWidth="max-w-6xl">
           <div className="flex h-16 items-center justify-between gap-4">
             <Link href="/admin" className="flex items-center gap-2">
               <Image
@@ -50,7 +50,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       </header>
 
       <main className="pb-16">
-        <Container className="py-8 sm:py-10">{children}</Container>
+        <Container maxWidth="max-w-6xl" className="py-8 sm:py-10">
+          {children}
+        </Container>
       </main>
     </div>
   );
