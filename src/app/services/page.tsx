@@ -272,7 +272,7 @@ export default function ServicesPage() {
                       )}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex h-12 items-center rounded-full bg-[#fbf6ec] px-6 text-sm font-semibold text-ink transition-transform duration-200 hover:scale-[1.02]"
+                      className="inline-flex h-12 items-center rounded-full bg-[#fbf6ec] px-6 text-sm font-semibold text-[#1a140a] transition-transform duration-200 hover:scale-[1.02]"
                     >
                       Start your book
                     </a>
@@ -417,7 +417,7 @@ export default function ServicesPage() {
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-12 items-center rounded-full bg-[#fbf6ec] px-7 text-sm font-semibold text-ink transition-transform duration-200 hover:scale-[1.02]"
+                  className="inline-flex h-12 items-center rounded-full bg-[#fbf6ec] px-7 text-sm font-semibold text-[#1a140a] transition-transform duration-200 hover:scale-[1.02]"
                 >
                   Chat on WhatsApp
                 </a>
