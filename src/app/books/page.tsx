@@ -101,48 +101,54 @@ export default async function BooksPage({
       <Header />
 
       <main className="pb-28 md:pb-4">
-        <Container className="py-10 sm:py-14">
-          {/* Hero heading */}
-          <header className="mb-8">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gold">
-              The Collection
-            </span>
-            <h1 className="mt-3 font-serif text-4xl font-medium tracking-tight text-ink sm:text-5xl">
-              {heading}
-            </h1>
-            <p className="mt-3 text-muted">
-              {result.total} {result.total === 1 ? "title" : "titles"}
-              {activeCategory ? ` in ${activeCategory.name}` : ""}
-              {q ? ` matching “${q}”` : ""}
-            </p>
-          </header>
+        <section className="border-b border-white/[0.06] bg-white/[0.02] py-10 sm:py-14">
+          <Container>
+            {/* Hero heading */}
+            <header className="mb-8">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gold">
+                The Collection
+              </span>
+              <h1 className="mt-3 font-serif text-4xl font-medium tracking-tight text-ink sm:text-5xl">
+                {heading}
+              </h1>
+              <p className="mt-3 text-muted">
+                {result.total} {result.total === 1 ? "title" : "titles"}
+                {activeCategory ? ` in ${activeCategory.name}` : ""}
+                {q ? ` matching “${q}”` : ""}
+              </p>
+            </header>
 
-          <CatalogToolbar categories={categories} />
+            <CatalogToolbar categories={categories} />
+          </Container>
+        </section>
 
-          <div className="mt-8">
-            {result.books.length === 0 ? (
-              <EmptyState hasQuery={!!q} />
-            ) : view === "list" ? (
-              <ul className="space-y-3">
-                {result.books.map((book) => (
-                  <BookRow key={book.id} book={book} />
-                ))}
-              </ul>
-            ) : (
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
-                {result.books.map((book) => (
-                  <BookCard key={book.id} book={book} />
-                ))}
-              </div>
-            )}
-          </div>
+        <section className="py-10 sm:py-14">
+          <Container>
+            <div>
+              {result.books.length === 0 ? (
+                <EmptyState hasQuery={!!q} />
+              ) : view === "list" ? (
+                <ul className="space-y-3">
+                  {result.books.map((book) => (
+                    <BookRow key={book.id} book={book} />
+                  ))}
+                </ul>
+              ) : (
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
+                  {result.books.map((book) => (
+                    <BookCard key={book.id} book={book} />
+                  ))}
+                </div>
+              )}
+            </div>
 
-          <Pagination
-            page={result.page}
-            totalPages={result.totalPages}
-            baseQuery={baseQuery}
-          />
-        </Container>
+            <Pagination
+              page={result.page}
+              totalPages={result.totalPages}
+              baseQuery={baseQuery}
+            />
+          </Container>
+        </section>
       </main>
 
       <Footer />
