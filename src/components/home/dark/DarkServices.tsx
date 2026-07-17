@@ -16,7 +16,7 @@ const SERVICES = [
 
 export function DarkServices() {
   return (
-    <section className="pt-14">
+    <section className="border-y border-white/[0.06] bg-white/[0.02] py-14">
       <Container>
         <div className="flex items-center justify-between">
           <div>
