@@ -1,9 +1,13 @@
 import { DarkHeader } from "@/components/home/dark/DarkHeader";
+import { DarkHero } from "@/components/home/dark/DarkHero";
+import { DarkTrustStats } from "@/components/home/dark/DarkTrustStats";
 import { DarkSearchBar } from "@/components/home/dark/DarkSearchBar";
 import { CatalogExplorer } from "@/components/home/dark/CatalogExplorer";
 import { DarkAuthors } from "@/components/home/dark/DarkAuthors";
 import { DarkPublisher } from "@/components/home/dark/DarkPublisher";
+import { DarkWhyUs } from "@/components/home/dark/DarkWhyUs";
 import { DarkServices } from "@/components/home/dark/DarkServices";
+import { DarkFAQ } from "@/components/home/dark/DarkFAQ";
 import { DarkFooter } from "@/components/home/dark/DarkFooter";
 import { DarkMobileNav } from "@/components/home/dark/DarkMobileNav";
 import { Reveal } from "@/components/ui/Reveal";
@@ -19,8 +23,10 @@ export default function HomePage() {
   return (
     <div className="theme-dark min-h-screen bg-canvas">
       <DarkHeader />
+      <DarkHero />
 
       <main className="pb-28 md:pb-4">
+        <DarkTrustStats />
         <DarkSearchBar />
         <Storefront />
 
@@ -31,7 +37,13 @@ export default function HomePage() {
           <DarkPublisher />
         </Reveal>
         <Reveal>
+          <DarkWhyUs />
+        </Reveal>
+        <Reveal>
           <DarkServices />
+        </Reveal>
+        <Reveal>
+          <DarkFAQ />
         </Reveal>
       </main>
 
