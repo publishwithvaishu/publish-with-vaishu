@@ -451,7 +451,7 @@ export function CatalogExplorer({
               </p>
             </div>
           ) : view === "grid" ? (
-            <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-6">
+            <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-7 2xl:grid-cols-8">
               {results.map((b) => (
                 <DarkBookCard key={b.id} book={b} />
               ))}

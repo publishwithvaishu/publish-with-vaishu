@@ -315,7 +315,7 @@ export default async function BookDetailPage({
               <p className="mt-2 text-muted">
                 More from {book.category?.name ?? "this course"}.
               </p>
-              <div className="mt-8 grid grid-cols-2 gap-x-5 gap-y-9 sm:grid-cols-3 lg:grid-cols-4">
+              <div className="mt-8 grid grid-cols-2 gap-x-5 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 2xl:grid-cols-8">
                 {related.map((b) => (
                   <BookCard key={b.id} book={b} />
                 ))}
