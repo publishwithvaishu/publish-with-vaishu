@@ -9,7 +9,14 @@ import { Container } from "@/components/ui/Container";
 import { BookCard } from "@/components/ui/BookCard";
 import { BookCover } from "@/components/ui/BookCover";
 import { AddToCartButtons } from "@/components/book/AddToCartButtons";
-import { getBookById, getRelatedBooks, getBookImages } from "@/lib/queries";
+import { StarRating } from "@/components/book/StarRating";
+import { ReviewsSection } from "@/components/book/ReviewsSection";
+import {
+  getBookById,
+  getRelatedBooks,
+  getBookImages,
+  getBookRatingSummary,
+} from "@/lib/queries";
 import { getSiteUrl } from "@/lib/site-url";
 import { pickAccent } from "@/lib/accents";
 import { formatPrice } from "@/lib/format";
@@ -71,9 +78,10 @@ export default async function BookDetailPage({
   const book = await getBookById(id);
   if (!book) notFound();
 
-  const [related, galleryImages] = await Promise.all([
+  const [related, galleryImages, ratingSummary] = await Promise.all([
     getRelatedBooks(book.category_id, book.id),
     getBookImages(book.id),
+    getBookRatingSummary(book.id),
   ]);
   const inStock = book.stock > 0;
   const authorNamesJoined = book.authors.map((a) => a.name).join(", ");
@@ -111,6 +119,15 @@ export default async function BookDetailPage({
     bookFormat: "https://schema.org/Paperback",
     url: canonicalUrl,
     publisher: { "@type": "Organization", name: "Publish With Vaishu" },
+    ...(ratingSummary.count > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: ratingSummary.average.toFixed(1),
+            reviewCount: ratingSummary.count,
+          },
+        }
+      : {}),
     offers: {
       "@type": "Offer",
       priceCurrency: "INR",
@@ -214,6 +231,18 @@ export default async function BookDetailPage({
                 </p>
               )}
 
+              {ratingSummary.count > 0 && (
+                <div className="mt-3 flex items-center gap-2">
+                  <StarRating value={ratingSummary.average} size={17} />
+                  <span className="text-sm font-semibold text-ink">
+                    {ratingSummary.average.toFixed(1)}
+                  </span>
+                  <span className="text-sm text-muted">
+                    ({ratingSummary.count} {ratingSummary.count === 1 ? "rating" : "ratings"})
+                  </span>
+                </div>
+              )}
+
               {/* Purchase card — sticks alongside the cover on desktop. */}
               <div className="card-dark mt-6 rounded-2xl p-5 md:sticky md:top-24">
                 <div className="flex flex-wrap items-center gap-4">
@@ -305,6 +334,8 @@ export default async function BookDetailPage({
               </div>
             </section>
           )}
+
+          <ReviewsSection bookId={book.id} />
 
           {/* Related Books */}
           {related.length > 0 && (

@@ -111,3 +111,17 @@ export interface TrustStats {
   authors: number;
   courses: number;
 }
+
+export interface Review {
+  id: string;
+  bookId: string;
+  rating: number;
+  comment: string | null;
+  createdAt: string;
+  reviewerName: string;
+}
+
+export interface RatingSummary {
+  average: number;
+  count: number;
+}

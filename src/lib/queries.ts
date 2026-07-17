@@ -1,5 +1,6 @@
 import "server-only";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import type {
   Author,
   BookDetail,
@@ -8,6 +9,8 @@ import type {
   CatalogResult,
   Category,
   Publisher,
+  RatingSummary,
+  Review,
   TrustStats,
 } from "@/lib/types";
 
@@ -277,6 +280,90 @@ export async function getBookById(id: string): Promise<BookDetail | null> {
 
   if (error) throw new Error(`Failed to load book: ${error.message}`);
   return data ? mapDetailRow(data) : null;
+}
+
+/**
+ * Reviews for a book, newest first, with the reviewer's display name.
+ * Reads via the admin client (not the anon client) because `reviews.user_id`
+ * joins `users`, which has RLS enabled with no public policy — the anon key
+ * can read `reviews` rows themselves (public policy) but not the joined
+ * `users.name`. This is a read-only, server-only query (no client exposure).
+ */
+export async function getBookReviews(bookId: string): Promise<Review[]> {
+  try {
+    const supabase = getSupabaseAdminClient();
+    const { data, error } = await supabase
+      .from("reviews")
+      .select("id, book_id, rating, comment, created_at, user:users(name)")
+      .eq("book_id", bookId)
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return (data ?? []).map((r) => mapReviewRow(r));
+  } catch (e) {
+    console.error("getBookReviews failed:", e);
+    return [];
+  }
+}
+
+/** Average rating + count for a book, computed from live review rows. */
+export async function getBookRatingSummary(bookId: string): Promise<RatingSummary> {
+  try {
+    const supabase = getSupabaseAdminClient();
+    const { data, error } = await supabase
+      .from("reviews")
+      .select("rating")
+      .eq("book_id", bookId);
+    if (error) throw new Error(error.message);
+    const ratings = (data ?? []).map((r) => r.rating as number);
+    if (ratings.length === 0) return { average: 0, count: 0 };
+    const average = ratings.reduce((a, b) => a + b, 0) / ratings.length;
+    return { average, count: ratings.length };
+  } catch (e) {
+    console.error("getBookRatingSummary failed:", e);
+    return { average: 0, count: 0 };
+  }
+}
+
+/** The current customer's existing review for this book, if any (for pre-filling the form). */
+export async function getMyReviewForBook(
+  bookId: string,
+  userId: string,
+): Promise<Review | null> {
+  try {
+    const supabase = getSupabaseAdminClient();
+    const { data, error } = await supabase
+      .from("reviews")
+      .select("id, book_id, rating, comment, created_at, user:users(name)")
+      .eq("book_id", bookId)
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    return data ? mapReviewRow(data) : null;
+  } catch (e) {
+    console.error("getMyReviewForBook failed:", e);
+    return null;
+  }
+}
+
+/** Maps a raw review row (id, book_id, rating, comment, created_at, user:{name}) to Review. */
+function mapReviewRow(row: unknown): Review {
+  const r = row as {
+    id: string;
+    book_id: string;
+    rating: number;
+    comment: string | null;
+    created_at: string;
+    user: { name: string } | { name: string }[] | null;
+  };
+  const user = Array.isArray(r.user) ? r.user[0] : r.user;
+  return {
+    id: r.id,
+    bookId: r.book_id,
+    rating: r.rating,
+    comment: r.comment,
+    createdAt: r.created_at,
+    reviewerName: user?.name ?? "Anonymous",
+  };
 }
 
 /** Additional gallery images for a book's detail page (front cover is `books.cover_image`). */
