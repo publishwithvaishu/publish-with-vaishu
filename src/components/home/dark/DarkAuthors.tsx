@@ -37,24 +37,7 @@ export async function DarkAuthors() {
               href={`/books?q=${encodeURIComponent(a.name)}`}
               className="card-dark w-[200px] shrink-0 rounded-2xl p-5 text-center lg:w-auto"
             >
-              {a.photo && !a.photo.includes("placehold.co") ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={a.photo}
-                  alt={a.name}
-                  className="mx-auto h-20 w-20 rounded-full border-2 border-[#e8b647]/40 object-cover"
-                />
-              ) : (
-                <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-2 border-[#e8b647]/30 bg-white/5 font-serif text-2xl text-gold">
-                  {a.name
-                    .split(/\s+/)
-                    .filter((w) => /[a-z]/i.test(w))
-                    .slice(0, 2)
-                    .map((w) => w[0]?.toUpperCase())
-                    .join("")}
-                </span>
-              )}
-              <h3 className="mt-3.5 line-clamp-1 text-sm font-semibold text-ink">
+              <h3 className="line-clamp-1 text-sm font-semibold text-ink">
                 {a.name}
               </h3>
               {a.designation && (
