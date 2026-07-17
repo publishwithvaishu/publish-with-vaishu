@@ -168,7 +168,7 @@ export function CatalogExplorer({
       <section className="pt-9">
         <Container>
           <SectionHead title="Explore Categories" href="/books" />
-          <div className="-mx-5 mt-4 flex gap-3 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="-mx-5 mt-4 flex gap-3 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0 lg:grid lg:grid-cols-[repeat(auto-fit,minmax(130px,1fr))] lg:gap-4 lg:overflow-visible lg:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <CategoryTile
               label="All Books"
               active={!activeCategory}
@@ -197,7 +197,7 @@ export function CatalogExplorer({
             })}
             <Link
               href="/books"
-              className="card-dark flex w-[104px] shrink-0 flex-col items-center justify-center gap-2.5 rounded-2xl px-3 py-5"
+              className="card-dark flex w-[104px] shrink-0 flex-col items-center justify-center gap-2.5 rounded-2xl px-3 py-5 lg:w-auto"
             >
               <span className="text-muted">
                 <DotsIcon />
@@ -371,7 +371,7 @@ export function CatalogExplorer({
       <section className="pt-10">
         <Container>
           <SectionHead title="Featured Collections" href="/books" />
-          <div className="-mx-5 mt-4 flex gap-4 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="-mx-5 mt-4 flex gap-4 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0 lg:grid lg:grid-cols-[repeat(auto-fit,minmax(190px,1fr))] lg:overflow-visible lg:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {COLLECTIONS.map((c) => (
               <button
                 key={c.key}
@@ -380,7 +380,7 @@ export function CatalogExplorer({
                   setCollection((prev) => (prev === c.key ? null : c.key))
                 }
                 className={cn(
-                  "card-dark relative w-[168px] shrink-0 overflow-hidden rounded-2xl bg-gradient-to-br to-transparent p-4 text-left",
+                  "card-dark relative w-[168px] shrink-0 overflow-hidden rounded-2xl bg-gradient-to-br to-transparent p-4 text-left lg:w-auto",
                   c.tint,
                   collection === c.key && "border-[#e8b647]/70",
                 )}
@@ -636,7 +636,7 @@ function CategoryTile({
       type="button"
       onClick={onClick}
       className={cn(
-        "card-dark flex w-[104px] shrink-0 flex-col items-center justify-center gap-2.5 rounded-2xl px-3 py-5",
+        "card-dark flex w-[104px] shrink-0 flex-col items-center justify-center gap-2.5 rounded-2xl px-3 py-5 lg:w-auto",
         active && "border-[#e8b647]/70 shadow-[0_0_22px_-8px_rgba(232,182,71,0.55)]",
       )}
     >

@@ -30,12 +30,12 @@ export async function DarkAuthors() {
           </Link>
         </div>
 
-        <div className="-mx-5 mt-5 flex gap-4 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="-mx-5 mt-5 flex gap-4 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0 lg:grid lg:grid-cols-[repeat(auto-fit,minmax(200px,1fr))] lg:overflow-visible lg:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {authors.map((a) => (
             <Link
               key={a.id}
               href={`/books?q=${encodeURIComponent(a.name)}`}
-              className="card-dark w-[200px] shrink-0 rounded-2xl p-5 text-center"
+              className="card-dark w-[200px] shrink-0 rounded-2xl p-5 text-center lg:w-auto"
             >
               {a.photo && !a.photo.includes("placehold.co") ? (
                 // eslint-disable-next-line @next/next/no-img-element
