@@ -7,7 +7,7 @@ import { Container } from "@/components/ui/Container";
  */
 export function DarkSearchBar() {
   return (
-    <section className="pt-5">
+    <section className="border-b border-white/[0.06] bg-white/[0.02] py-5">
       <Container>
         <form action="/books" method="get" role="search">
           <label htmlFor="dark-site-search" className="sr-only">

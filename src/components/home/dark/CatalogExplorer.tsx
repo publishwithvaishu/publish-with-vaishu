@@ -165,7 +165,7 @@ export function CatalogExplorer({
   return (
     <>
       {/* ------------------------------------------------ Explore Categories */}
-      <section className="pt-9">
+      <section className="border-b border-white/[0.06] bg-white/[0.02] py-9">
         <Container>
           <SectionHead title="Explore Categories" href="/books" />
           <div className="-mx-5 mt-4 flex gap-3 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0 lg:grid lg:grid-cols-[repeat(auto-fit,minmax(130px,1fr))] lg:gap-4 lg:overflow-visible lg:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -232,7 +232,7 @@ export function CatalogExplorer({
       )}
 
       {/* ------------------------------------------------------------ Filters */}
-      <section className="pt-8">
+      <section className="border-b border-white/[0.06] bg-white/[0.02] py-8">
         <Container>
           <div className="glass-dark rounded-2xl p-5 sm:p-6">
             <div className="flex items-center justify-between">
@@ -368,7 +368,7 @@ export function CatalogExplorer({
       </section>
 
       {/* ------------------------------------------------ Featured Collections */}
-      <section className="pt-10">
+      <section className="border-b border-white/[0.06] bg-white/[0.02] py-10">
         <Container>
           <SectionHead title="Featured Collections" href="/books" />
           <div className="-mx-5 mt-4 flex gap-4 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0 lg:grid lg:grid-cols-[repeat(auto-fit,minmax(190px,1fr))] lg:overflow-visible lg:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
